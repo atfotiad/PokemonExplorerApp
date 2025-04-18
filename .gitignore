@@ -1,0 +1,48 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+build/
+
+# Android Studio and IntelliJ IDEA files
+.idea/
+*.iws
+*.ipr
+
+# Android Studio cache
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/gradle.xml
+.idea/usage.statistics.xml
+.idea/dictionaries/
+.idea/httpRequests/
+*.jks
+*.keystore
+*.log
+Thumbs.db
+
+# Build directories
+app/build/
+*/build/
+
+# Miscellaneous
+*.apk
+*.ap_
+*.dex
+*.class
+
+
+

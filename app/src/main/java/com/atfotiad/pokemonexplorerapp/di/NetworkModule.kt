@@ -1,5 +1,6 @@
 package com.atfotiad.pokemonexplorerapp.di
 
+import com.atfotiad.pokemonexplorerapp.api.PokeClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

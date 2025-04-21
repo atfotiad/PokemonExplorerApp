@@ -12,8 +12,8 @@ sealed interface PokemonDestination {
     }
 
     data object Detail : PokemonDestination {
-        override val route = "detail"
         private const val POKEMON = "pokemonName"
+        override val route = "detail/{$POKEMON}"
         val arguments = listOf(navArgument(POKEMON) {
             type = NavType.ParcelableType(Pokemon::class.java)
         })

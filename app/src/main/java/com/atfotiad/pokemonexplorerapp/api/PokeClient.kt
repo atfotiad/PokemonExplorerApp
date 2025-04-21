@@ -15,7 +15,7 @@ interface PokeClient {
         @Query("offset")
         offset: Int = 0,
         @Query("limit")
-        limit: Int = 100
+        limit: Int = 10
     ): Response<BaseResponse>
 
 

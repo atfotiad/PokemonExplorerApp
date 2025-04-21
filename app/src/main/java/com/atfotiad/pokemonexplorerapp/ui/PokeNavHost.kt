@@ -14,9 +14,14 @@ import com.atfotiad.pokemonexplorerapp.navigation.PokemonDestination
 @Composable
 fun PokeNavHost(
     navController: NavHostController,
-    pokemonViewModel: PokemonViewModel
+    pokemonViewModel: PokemonViewModel,
+    modifier: Modifier = Modifier
 ) {
-    NavHost(navController, startDestination = "home") {
+    NavHost(
+        navController,
+        startDestination = "home",
+        modifier
+    ) {
         composable(PokemonDestination.Home.route) {
             HomeScreen(Modifier, pokemonViewModel) { pokemon ->
                 navController.navigateToDetails(pokemon)

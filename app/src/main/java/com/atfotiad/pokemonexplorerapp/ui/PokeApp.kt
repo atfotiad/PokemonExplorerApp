@@ -1,7 +1,9 @@
 package com.atfotiad.pokemonexplorerapp.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,6 +18,9 @@ fun PokeApp() {
     ) {
         val navController = rememberNavController()
         val pokemonViewModel: PokemonViewModel = hiltViewModel()
-        PokeNavHost(navController, pokemonViewModel)
+        Scaffold {
+            innerPadding ->
+            PokeNavHost(navController, pokemonViewModel, Modifier.padding(innerPadding))
+        }
     }
 }

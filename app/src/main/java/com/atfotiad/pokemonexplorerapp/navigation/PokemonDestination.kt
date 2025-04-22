@@ -1,21 +1,14 @@
 package com.atfotiad.pokemonexplorerapp.navigation
 
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import com.atfotiad.pokemonexplorerapp.model.Pokemon
+import kotlinx.serialization.Serializable
 
 sealed interface PokemonDestination {
-    val route: String
+    @Serializable
+    data object MainScreen: PokemonDestination
 
-    data object Home : PokemonDestination {
-        override val route = "home"
-    }
-
-    data object Detail : PokemonDestination {
-        private const val POKEMON = "pokemonName"
-        override val route = "detail/{$POKEMON}"
-        val arguments = listOf(navArgument(POKEMON) {
-            type = NavType.ParcelableType(Pokemon::class.java)
-        })
-    }
+    @Serializable
+    data class DetailScreen(
+        val pokemon: Pokemon
+    ): PokemonDestination
 }

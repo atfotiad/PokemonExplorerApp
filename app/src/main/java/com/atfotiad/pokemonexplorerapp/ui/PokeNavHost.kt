@@ -1,15 +1,18 @@
 package com.atfotiad.pokemonexplorerapp.ui
 
-import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.atfotiad.pokemonexplorerapp.model.Pokemon
 import com.atfotiad.pokemonexplorerapp.navigation.PokemonDestination
+import com.atfotiad.pokemonexplorerapp.utils.navigation.toNavType
+import kotlin.reflect.typeOf
 
 @Composable
 fun PokeNavHost(
@@ -19,32 +22,25 @@ fun PokeNavHost(
 ) {
     NavHost(
         navController,
-        startDestination = "home",
+        startDestination = PokemonDestination.MainScreen,
         modifier
     ) {
-        composable(PokemonDestination.Home.route) {
+        composable<PokemonDestination.MainScreen> {
             HomeScreen(Modifier, pokemonViewModel) { pokemon ->
                 navController.navigateToDetails(pokemon)
             }
         }
-        composable(
-            PokemonDestination.Detail.route,
-            arguments = PokemonDestination.Detail.arguments
+        composable<PokemonDestination.DetailScreen>(
+            typeMap = mapOf(typeOf<Pokemon>() to NavType.toNavType<Pokemon>())
         ) {
-            val pokemon = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.arguments?.getParcelable("pokemonName", Pokemon::class.java)
-            } else {
-                it.arguments?.getParcelable("pokemonName")
-            }
+            val pokemon = it.toRoute<PokemonDestination.DetailScreen>().pokemon
             val pokemonDetailsViewModel: PokemonDetailsViewModel = hiltViewModel()
-            if (pokemon != null) {
-                PokemonDetailsScreen(pokemon = pokemon, viewModel = pokemonDetailsViewModel)
-            }
+            PokemonDetailsScreen(pokemon = pokemon, viewModel = pokemonDetailsViewModel)
         }
     }
 }
 
-fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) {
+fun NavHostController.navigateSingleTopTo(route: Any) = this.navigate(route) {
     popUpTo(
         this@navigateSingleTopTo.graph.findStartDestination().id
     ) {
@@ -55,5 +51,5 @@ fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) 
 }
 
 private fun NavHostController.navigateToDetails(pokemon: Pokemon) {
-    this.navigateSingleTopTo("${PokemonDestination.Detail.route}?pokemonName=${pokemon.name}")
+    this.navigateSingleTopTo(PokemonDestination.DetailScreen(pokemon))
 }

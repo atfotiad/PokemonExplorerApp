@@ -1,4 +1,4 @@
-package com.atfotiad.pokemonexplorerapp.ui
+package com.atfotiad.pokemonexplorerapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,7 +10,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.atfotiad.pokemonexplorerapp.model.Pokemon
-import com.atfotiad.pokemonexplorerapp.navigation.PokemonDestination
+import com.atfotiad.pokemonexplorerapp.ui.HomeScreen
+import com.atfotiad.pokemonexplorerapp.ui.PokemonDetailsScreen
+import com.atfotiad.pokemonexplorerapp.ui.PokemonDetailsViewModel
+import com.atfotiad.pokemonexplorerapp.ui.PokemonViewModel
 import com.atfotiad.pokemonexplorerapp.utils.navigation.toNavType
 import kotlin.reflect.typeOf
 
@@ -26,7 +29,7 @@ fun PokeNavHost(
         modifier
     ) {
         composable<PokemonDestination.MainScreen> {
-            HomeScreen(Modifier, pokemonViewModel) { pokemon ->
+            HomeScreen(modifier, pokemonViewModel) { pokemon ->
                 navController.navigateToDetails(pokemon)
             }
         }
@@ -35,7 +38,8 @@ fun PokeNavHost(
         ) {
             val pokemon = it.toRoute<PokemonDestination.DetailScreen>().pokemon
             val pokemonDetailsViewModel: PokemonDetailsViewModel = hiltViewModel()
-            PokemonDetailsScreen(pokemon = pokemon, viewModel = pokemonDetailsViewModel)
+            it.savedStateHandle["pokemon"] = pokemon
+            PokemonDetailsScreen( viewModel = pokemonDetailsViewModel)
         }
     }
 }
@@ -44,7 +48,7 @@ fun NavHostController.navigateSingleTopTo(route: Any) = this.navigate(route) {
     popUpTo(
         this@navigateSingleTopTo.graph.findStartDestination().id
     ) {
-        saveState = false
+        saveState = true
     }
     launchSingleTop = true
     restoreState = true

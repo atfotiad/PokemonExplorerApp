@@ -1,6 +1,7 @@
 [versions]
 agp = "8.9.1"
 compose = "1.0.0-beta01"
+constraintlayoutComposeAndroid = "1.1.1"
 converterGson = "2.11.0"
 hiltAndroid = "2.56.1"
 hiltNavigationCompose = "1.2.0"
@@ -20,6 +21,7 @@ pagingRuntime = "3.3.6"
 retrofit = "2.11.0"
 
 [libraries]
+androidx-constraintlayout-compose-android = { module = "androidx.constraintlayout:constraintlayout-compose-android", version.ref = "constraintlayoutComposeAndroid" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }

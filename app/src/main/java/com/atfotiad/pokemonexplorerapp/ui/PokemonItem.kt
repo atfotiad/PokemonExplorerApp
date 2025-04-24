@@ -29,7 +29,7 @@ fun PokemonItem(
     onPokemonClick: (Pokemon) -> Unit
 ) {
     Card(
-        modifier
+        modifier = modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .clickable { onPokemonClick(pokemon) },
         elevation = CardDefaults.cardElevation(4.dp),
@@ -43,7 +43,7 @@ fun PokemonItem(
                 modifier = modifier
                     .size(50.dp)
                     .clip(CircleShape)
-                    .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)
+                    .border(2.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
                     .padding(8.dp)
             )
             Text(

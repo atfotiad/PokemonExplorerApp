@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.atfotiad.pokemonexplorerapp.R
 import com.atfotiad.pokemonexplorerapp.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.model.Species
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -51,11 +52,16 @@ fun PokemonDetailsScreen(
         "",
         emptyList(),
         emptyList(),
+        Species("",""),
         "",
         "",
         ""
     )
-    Column(modifier.safeDrawingPadding().verticalScroll(rememberScrollState(), true)) {
+    Column(
+        modifier
+            .safeDrawingPadding()
+            .verticalScroll(rememberScrollState(), true)
+    ) {
         PokemonCard(pokemon = pokemon, modifier) {
             viewModel.playCry(pokemon)
         }
@@ -65,6 +71,27 @@ fun PokemonDetailsScreen(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun PokemonCard(pokemon: Pokemon, modifier: Modifier = Modifier, onPlayCry: () -> Unit) {
+    val typeToResourceMap = mapOf(
+        "fire" to R.drawable.fire,
+        "water" to R.drawable.water,
+        "grass" to R.drawable.grass,
+        "electric" to R.drawable.electric,
+        "poison" to R.drawable.poison,
+        "normal" to R.drawable.normal,
+        "psychic" to R.drawable.psychic,
+        "rock" to R.drawable.rock,
+        "ghost" to R.drawable.ghost,
+        "ice" to R.drawable.ice,
+        "ground" to R.drawable.ground,
+        "flying" to R.drawable.flying,
+        "fighting" to R.drawable.fighting,
+        "bug" to R.drawable.bug,
+        "steel" to R.drawable.steel,
+        "dragon" to R.drawable.dragon,
+        "dark" to R.drawable.dark,
+        "fairy" to R.drawable.fairy
+    )
+
     Card(
         modifier = modifier
             .fillMaxSize()
@@ -93,16 +120,15 @@ fun PokemonCard(pokemon: Pokemon, modifier: Modifier = Modifier, onPlayCry: () -
                     textAlign = TextAlign.Center
                 )
                 Row(modifier = modifier.align(Alignment.TopEnd)) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_launcher_foreground),
-                        contentDescription = "Primary Type",
-                        modifier = modifier.size(30.dp)
-                    )
-                    Image(
-                        painter = painterResource(R.drawable.ic_launcher_foreground),
-                        contentDescription = "Secondary Type",
-                        modifier = modifier.size(30.dp)
-                    )
+                    for (type in pokemon.types) {
+                        typeToResourceMap[type.type.name]?.let {
+                            Image(
+                                painter = painterResource(it),
+                                contentDescription = type.type.name,
+                                modifier = modifier.size(30.dp)
+                            )
+                        }
+                    }
                 }
             }
 
@@ -124,18 +150,20 @@ fun PokemonCard(pokemon: Pokemon, modifier: Modifier = Modifier, onPlayCry: () -
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Button(onClick = {
-                    onPlayCry()
-                }) {
+                Button(
+                    onClick = {
+                        onPlayCry()
+                    }, modifier = modifier.padding(start = 8.dp)
+                ) {
                     Text("Cry")
                 }
                 Text(
-                    pokemon.pokeDexEntry.replace("[\n\t\u000c]".toRegex(), " "),
+                    pokemon.pokeDexEntry.replace("[\n\t\u000c]".toRegex(), ""),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
             }
-            PokemonStatsSection(modifier,stats = pokemon.stats)
+            PokemonStatsSection(modifier, stats = pokemon.stats)
         }
     }
 }

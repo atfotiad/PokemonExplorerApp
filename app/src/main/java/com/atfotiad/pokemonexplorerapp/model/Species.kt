@@ -7,17 +7,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Parcelize
-data class Pokemon(
-    val id: Int,
+data class Species(
     val name: String,
-    val types: List<Type>,
-    val stats: List<Stat>,
-    val species: Species,
     @Serializable(with = UrlSerializer::class)
-    val cry: String,
-    @Serializable(with = UrlSerializer::class)
-    val imageUrl: String,
-    val pokeDexEntry: String
+    val url: String
 ) : Parcelable
 
 

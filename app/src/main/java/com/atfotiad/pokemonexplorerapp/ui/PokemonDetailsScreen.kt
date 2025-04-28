@@ -1,5 +1,7 @@
 package com.atfotiad.pokemonexplorerapp.ui
 
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +22,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +43,8 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 @Composable
@@ -47,30 +54,62 @@ fun PokemonDetailsScreen(
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val isMediaPlayerReady by viewModel.isMediaPlayerReady.collectAsStateWithLifecycle()
     val pokemon = state ?: Pokemon(
         0,
         "",
         emptyList(),
         emptyList(),
-        Species("",""),
+        Species("", ""),
         "",
         "",
         ""
     )
+    var mediaPlayer = remember { MediaPlayer() }
+
+    LaunchedEffect(key1 = state) {
+        withContext(Dispatchers.IO) {
+            viewModel.resetMediaPlayerReady()
+            if (state != null) {
+                mediaPlayer = MediaPlayer().apply {
+                    setAudioAttributes(
+                        AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .build()
+                    )
+                    setDataSource(state?.cry)
+                    prepare()
+                }
+                viewModel.setMediaPlayer(mediaPlayer)
+            }
+        }
+    }
+    DisposableEffect(key1 = Unit) {
+        onDispose {
+            mediaPlayer.release()
+        }
+    }
+
     Column(
         modifier
             .safeDrawingPadding()
             .verticalScroll(rememberScrollState(), true)
     ) {
-        PokemonCard(pokemon = pokemon, modifier) {
-            viewModel.playCry(pokemon)
+        PokemonCard(pokemon = pokemon, modifier, isMediaPlayerReady) {
+            viewModel.playCry()
         }
     }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun PokemonCard(pokemon: Pokemon, modifier: Modifier = Modifier, onPlayCry: () -> Unit) {
+fun PokemonCard(
+    pokemon: Pokemon,
+    modifier: Modifier = Modifier,
+    isMediaPlayerReady: Boolean,
+    onPlayCry: () -> Unit
+) {
     val typeToResourceMap = mapOf(
         "fire" to R.drawable.fire,
         "water" to R.drawable.water,
@@ -153,12 +192,13 @@ fun PokemonCard(pokemon: Pokemon, modifier: Modifier = Modifier, onPlayCry: () -
                 Button(
                     onClick = {
                         onPlayCry()
-                    }, modifier = modifier.padding(start = 8.dp)
+                    }, modifier = modifier.padding(start = 8.dp),
+                    enabled = isMediaPlayerReady
                 ) {
                     Text("Cry")
                 }
                 Text(
-                    pokemon.pokeDexEntry.replace("[\n\t\u000c]".toRegex(), ""),
+                    pokemon.pokeDexEntry.replace("[\n\t\u000c]".toRegex(), " "),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )

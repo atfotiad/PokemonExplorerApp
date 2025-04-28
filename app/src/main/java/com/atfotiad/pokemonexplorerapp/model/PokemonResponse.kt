@@ -6,5 +6,6 @@ data class PokemonResponse(
     val types: List<Type>,
     val stats: List<Stat>,
     val cries: Cry,
-    val sprites: Sprites
+    val sprites: Sprites,
+    val species: Species
 )

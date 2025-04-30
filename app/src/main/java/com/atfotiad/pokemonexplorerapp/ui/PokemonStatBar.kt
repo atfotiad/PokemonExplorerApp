@@ -41,14 +41,9 @@ fun PokemonStatBar(
     var animationPlayed by remember {
         mutableStateOf(false)
     }
-    val maxValue = if (statValue.stat.name == "hp") {
-        (statValue.baseStat * 2 + 204) * 1f
-    } else {
-        (statValue.baseStat * 2 + 99) * 1.1f
-    }
     val currentPercent = animateFloatAsState(
         targetValue = if (animationPlayed) {
-            statValue.baseStat.toFloat() / maxValue
+            statValue.baseStat.toFloat() / 255f
         } else 0f,
         label = "",
         animationSpec = tween(
@@ -106,7 +101,6 @@ fun PokemonStatBar(
                     .background(statBarColor)
             )
 
-            // Stat Value Text
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)

@@ -1,9 +1,6 @@
 package com.atfotiad.pokemonexplorerapp.ui
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -15,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -29,8 +27,9 @@ fun PokemonList(
     onClick: (Pokemon) -> Unit,
     isLoading: Boolean,
     onLoadMore: () -> Unit,
-    isAllItemsLoaded: Boolean,
-    shouldShowLoadMoreButton: Boolean
+    shouldShowLoadMoreButton: State<Boolean>,
+    shouldShowEndOfResults: State<Boolean>,
+    shouldShowNoPokemonFound: State<Boolean>
 ) {
     LazyColumn(modifier = modifier.animateContentSize(), state = listState) {
         items(list, key = { pokemon -> pokemon.id }) { pokemon ->
@@ -48,20 +47,17 @@ fun PokemonList(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (isLoading) {
+                if (isLoading && list.isNotEmpty()) {
                     CircularProgressIndicator()
-                } else if (shouldShowLoadMoreButton) {
-                    Button(onClick = onLoadMore) {
-                        Text("Load More")
-                    }
-                } else {
-                    AnimatedVisibility(
-                        visible = isAllItemsLoaded && list.isNotEmpty(),
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        Text("End of Results")
-                    }
+                }
+                if (shouldShowLoadMoreButton.value) {
+                    Button(onClick = onLoadMore) { Text("Load More") }
+                }
+                if (shouldShowEndOfResults.value) {
+                    Text("End of Results")
+                }
+                if (shouldShowNoPokemonFound.value) {
+                    Text("No Pokemon Found")
                 }
             }
         }

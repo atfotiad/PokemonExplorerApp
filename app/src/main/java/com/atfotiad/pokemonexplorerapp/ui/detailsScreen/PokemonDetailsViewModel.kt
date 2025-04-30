@@ -1,9 +1,9 @@
-package com.atfotiad.pokemonexplorerapp.ui
+package com.atfotiad.pokemonexplorerapp.ui.detailsScreen
 
 import android.media.MediaPlayer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.atfotiad.pokemonexplorerapp.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

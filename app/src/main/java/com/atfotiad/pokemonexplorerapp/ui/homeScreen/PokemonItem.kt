@@ -1,4 +1,4 @@
-package com.atfotiad.pokemonexplorerapp.ui
+package com.atfotiad.pokemonexplorerapp.ui.homeScreen
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.atfotiad.pokemonexplorerapp.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 

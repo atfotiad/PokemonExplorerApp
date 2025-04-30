@@ -1,4 +1,4 @@
-package com.atfotiad.pokemonexplorerapp.ui
+package com.atfotiad.pokemonexplorerapp.ui.homeScreen
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -52,7 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.atfotiad.pokemonexplorerapp.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
 import com.atfotiad.pokemonexplorerapp.utils.typeColorMap
 import com.atfotiad.pokemonexplorerapp.utils.types
 import kotlinx.coroutines.FlowPreview

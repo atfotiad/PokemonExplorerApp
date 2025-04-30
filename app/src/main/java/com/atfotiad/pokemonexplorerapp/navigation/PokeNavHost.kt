@@ -11,11 +11,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.atfotiad.pokemonexplorerapp.model.Pokemon
-import com.atfotiad.pokemonexplorerapp.ui.HomeScreen
-import com.atfotiad.pokemonexplorerapp.ui.PokemonDetailsScreen
-import com.atfotiad.pokemonexplorerapp.ui.PokemonDetailsViewModel
-import com.atfotiad.pokemonexplorerapp.ui.PokemonViewModel
+import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.ui.homeScreen.HomeScreen
+import com.atfotiad.pokemonexplorerapp.ui.detailsScreen.PokemonDetailsScreen
+import com.atfotiad.pokemonexplorerapp.ui.detailsScreen.PokemonDetailsViewModel
+import com.atfotiad.pokemonexplorerapp.ui.homeScreen.PokemonViewModel
 import com.atfotiad.pokemonexplorerapp.utils.navigation.toNavType
 import kotlin.reflect.typeOf
 

@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.atfotiad.pokemonexplorerapp.ui.PokeApp
+import com.atfotiad.pokemonexplorerapp.navigation.PokeApp
 import com.atfotiad.pokemonexplorerapp.ui.theme.PokemonExplorerAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 

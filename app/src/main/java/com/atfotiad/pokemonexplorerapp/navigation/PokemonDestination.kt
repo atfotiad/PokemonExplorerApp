@@ -1,6 +1,6 @@
 package com.atfotiad.pokemonexplorerapp.navigation
 
-import com.atfotiad.pokemonexplorerapp.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
 import kotlinx.serialization.Serializable
 
 sealed interface PokemonDestination {

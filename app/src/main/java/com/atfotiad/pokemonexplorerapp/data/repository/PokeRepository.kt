@@ -1,8 +1,8 @@
-package com.atfotiad.pokemonexplorerapp
+package com.atfotiad.pokemonexplorerapp.data.repository
 
 import com.atfotiad.pokemonexplorerapp.data.source.remote.PokeRemoteDataSource
-import com.atfotiad.pokemonexplorerapp.model.Pokemon
-import com.atfotiad.pokemonexplorerapp.model.PokemonResponse
+import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.data.model.PokemonResponse
 import com.atfotiad.pokemonexplorerapp.utils.repository.Result
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.async

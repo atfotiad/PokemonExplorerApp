@@ -1,4 +1,4 @@
-package com.atfotiad.pokemonexplorerapp.ui
+package com.atfotiad.pokemonexplorerapp.ui.homeScreen
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -19,7 +19,7 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.atfotiad.pokemonexplorerapp.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -38,7 +38,8 @@ fun PokemonList(
 ) {
     LazyColumn(modifier = modifier.animateContentSize(), state = listState) {
         items(list, key = { pokemon -> pokemon.id }) { pokemon ->
-            PokemonItem(sharedTransitionScope, animatedContentScope,
+            PokemonItem(
+                sharedTransitionScope, animatedContentScope,
                 pokemon = pokemon,
             ) {
                 onClick(pokemon)

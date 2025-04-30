@@ -1,4 +1,4 @@
-package com.atfotiad.pokemonexplorerapp.ui
+package com.atfotiad.pokemonexplorerapp.ui.detailsScreen
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -40,7 +40,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.atfotiad.pokemonexplorerapp.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.ui.homeScreen.emptyPokemon
 import com.atfotiad.pokemonexplorerapp.utils.typeToResourceMap
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage

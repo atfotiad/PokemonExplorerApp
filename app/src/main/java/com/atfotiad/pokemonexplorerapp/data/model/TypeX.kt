@@ -1,4 +1,4 @@
-package com.atfotiad.pokemonexplorerapp.model
+package com.atfotiad.pokemonexplorerapp.data.model
 
 import android.os.Parcelable
 import com.atfotiad.pokemonexplorerapp.data.UrlSerializer
@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Parcelize
-data class Species(
+data class TypeX(
     val name: String,
     @Serializable(with = UrlSerializer::class)
     val url: String

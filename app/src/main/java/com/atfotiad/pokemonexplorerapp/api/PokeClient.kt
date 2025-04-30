@@ -1,8 +1,8 @@
 package com.atfotiad.pokemonexplorerapp.api
 
-import com.atfotiad.pokemonexplorerapp.model.BaseResponse
-import com.atfotiad.pokemonexplorerapp.model.PokeDexEntryText
-import com.atfotiad.pokemonexplorerapp.model.PokemonResponse
+import com.atfotiad.pokemonexplorerapp.data.model.BaseResponse
+import com.atfotiad.pokemonexplorerapp.data.model.PokeDexEntryText
+import com.atfotiad.pokemonexplorerapp.data.model.PokemonResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

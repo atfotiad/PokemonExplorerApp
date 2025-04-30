@@ -1,9 +1,9 @@
 package com.atfotiad.pokemonexplorerapp.data.source.remote
 
 import com.atfotiad.pokemonexplorerapp.api.PokeClient
-import com.atfotiad.pokemonexplorerapp.model.BaseResponse
-import com.atfotiad.pokemonexplorerapp.model.PokeDexEntryText
-import com.atfotiad.pokemonexplorerapp.model.PokemonResponse
+import com.atfotiad.pokemonexplorerapp.data.model.BaseResponse
+import com.atfotiad.pokemonexplorerapp.data.model.PokeDexEntryText
+import com.atfotiad.pokemonexplorerapp.data.model.PokemonResponse
 import com.atfotiad.pokemonexplorerapp.utils.repository.RepoUtils.toResult
 import com.atfotiad.pokemonexplorerapp.utils.repository.Result
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.atfotiad.pokemonexplorerapp.model
+package com.atfotiad.pokemonexplorerapp.data.model
 
 data class BaseResponse(
     val count: Int,

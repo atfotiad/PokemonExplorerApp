@@ -1,14 +1,14 @@
-package com.atfotiad.pokemonexplorerapp.ui
+package com.atfotiad.pokemonexplorerapp.ui.homeScreen
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.atfotiad.pokemonexplorerapp.PokeRepository
-import com.atfotiad.pokemonexplorerapp.model.Pokemon
-import com.atfotiad.pokemonexplorerapp.model.Species
-import com.atfotiad.pokemonexplorerapp.ui.StateUI.Error
-import com.atfotiad.pokemonexplorerapp.ui.StateUI.Loading
-import com.atfotiad.pokemonexplorerapp.ui.StateUI.Success
+import com.atfotiad.pokemonexplorerapp.data.repository.PokeRepository
+import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.data.model.Species
+import com.atfotiad.pokemonexplorerapp.ui.homeScreen.StateUI.Error
+import com.atfotiad.pokemonexplorerapp.ui.homeScreen.StateUI.Loading
+import com.atfotiad.pokemonexplorerapp.ui.homeScreen.StateUI.Success
 import com.atfotiad.pokemonexplorerapp.utils.repository.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

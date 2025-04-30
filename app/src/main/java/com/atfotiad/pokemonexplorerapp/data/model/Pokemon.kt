@@ -1,4 +1,4 @@
-package com.atfotiad.pokemonexplorerapp.model
+package com.atfotiad.pokemonexplorerapp.data.model
 
 import android.os.Parcelable
 import com.atfotiad.pokemonexplorerapp.data.UrlSerializer

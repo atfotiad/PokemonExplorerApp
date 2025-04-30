@@ -1,4 +1,4 @@
-package com.atfotiad.pokemonexplorerapp.ui
+package com.atfotiad.pokemonexplorerapp.ui.detailsScreen
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -23,7 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.atfotiad.pokemonexplorerapp.model.Stat
+import com.atfotiad.pokemonexplorerapp.data.model.Stat
 import com.atfotiad.pokemonexplorerapp.ui.theme.DarkGreen
 import com.atfotiad.pokemonexplorerapp.ui.theme.LightGreen
 import com.atfotiad.pokemonexplorerapp.ui.theme.Orange

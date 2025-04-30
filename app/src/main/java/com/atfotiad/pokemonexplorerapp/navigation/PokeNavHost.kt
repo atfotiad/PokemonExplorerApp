@@ -1,5 +1,7 @@
 package com.atfotiad.pokemonexplorerapp.navigation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -17,29 +19,42 @@ import com.atfotiad.pokemonexplorerapp.ui.PokemonViewModel
 import com.atfotiad.pokemonexplorerapp.utils.navigation.toNavType
 import kotlin.reflect.typeOf
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun PokeNavHost(
     navController: NavHostController,
     pokemonViewModel: PokemonViewModel,
     modifier: Modifier = Modifier
 ) {
-    NavHost(
-        navController,
-        startDestination = PokemonDestination.MainScreen,
-        modifier
-    ) {
-        composable<PokemonDestination.MainScreen> {
-            HomeScreen(modifier, pokemonViewModel) { pokemon ->
-                navController.navigateToDetails(pokemon)
-            }
-        }
-        composable<PokemonDestination.DetailScreen>(
-            typeMap = mapOf(typeOf<Pokemon>() to NavType.toNavType<Pokemon>())
+
+    SharedTransitionLayout {
+        NavHost(
+            navController,
+            startDestination = PokemonDestination.MainScreen,
+            modifier
         ) {
-            val pokemon = it.toRoute<PokemonDestination.DetailScreen>().pokemon
-            val pokemonDetailsViewModel: PokemonDetailsViewModel = hiltViewModel()
-            it.savedStateHandle["pokemon"] = pokemon
-            PokemonDetailsScreen( viewModel = pokemonDetailsViewModel)
+            composable<PokemonDestination.MainScreen> {
+                HomeScreen(
+                    this@SharedTransitionLayout,
+                    this@composable,
+                    modifier,
+                    pokemonViewModel
+                ) { pokemon ->
+                    navController.navigateToDetails(pokemon)
+                }
+            }
+            composable<PokemonDestination.DetailScreen>(
+                typeMap = mapOf(typeOf<Pokemon>() to NavType.toNavType<Pokemon>())
+            ) {
+                val pokemon = it.toRoute<PokemonDestination.DetailScreen>().pokemon
+                val pokemonDetailsViewModel: PokemonDetailsViewModel = hiltViewModel()
+                it.savedStateHandle["pokemon"] = pokemon
+                PokemonDetailsScreen(
+                    this@SharedTransitionLayout,
+                    this@composable,
+                    viewModel = pokemonDetailsViewModel
+                )
+            }
         }
     }
 }

@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.atfotiad.pokemonexplorerapp.PokeRepository
 import com.atfotiad.pokemonexplorerapp.model.Pokemon
 import com.atfotiad.pokemonexplorerapp.model.Species
-import com.atfotiad.pokemonexplorerapp.utils.repository.RepoUtils.getOrErrorMessage
+import com.atfotiad.pokemonexplorerapp.ui.StateUI.Error
+import com.atfotiad.pokemonexplorerapp.ui.StateUI.Loading
+import com.atfotiad.pokemonexplorerapp.ui.StateUI.Success
 import com.atfotiad.pokemonexplorerapp.utils.repository.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +30,7 @@ class PokemonViewModel @Inject constructor(
     private val _selectedFilters = MutableStateFlow<Set<String>>(emptySet())
     val selectedFilters: StateFlow<Set<String>> = _selectedFilters.asStateFlow()
 
-    private val _stateUI = MutableStateFlow<StateUI<List<Pokemon>>>(StateUI.Loading)
+    private val _stateUI = MutableStateFlow<StateUI<List<Pokemon>>>(Loading)
     val stateUI: StateFlow<StateUI<List<Pokemon>>> = _stateUI.asStateFlow()
 
     private val _isSearchingByName = MutableStateFlow(false)
@@ -37,7 +39,6 @@ class PokemonViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _displayPokemonItems = MutableStateFlow<List<Pokemon>>(emptyList())
     private val _allPokemon = MutableStateFlow<List<Pokemon>>(emptyList())
     val totalPokemonCount: StateFlow<Int> = repository.totalPokemonCount
 
@@ -45,106 +46,143 @@ class PokemonViewModel @Inject constructor(
     private val limit = 10
 
     init {
-        load()
+        loadInitialPokemon()
     }
-
 
     fun setSearchQuery(query: String) {
         _searchQuery.update { query }
         _isSearchingByName.value = query.isNotBlank()
+        if (query.isBlank()) {
+            performSearch() // Re-filter when search query is cleared
+        }
     }
 
     fun updateFilters(selectedFilters: Set<String>) {
         _selectedFilters.update { selectedFilters }
-        _stateUI.value = filterPokemon(_searchQuery.value, selectedFilters, _allPokemon.value)
+        filterAndUpdateState()
     }
 
     fun clearAllFilters() {
         _selectedFilters.update { emptySet() }
-        _stateUI.value = filterPokemon(_searchQuery.value, emptySet(), _allPokemon.value)
+        filterAndUpdateState()
     }
 
     fun loadMore() {
-        offset += 10
-        load()
+        if (!_isLoading.value) {
+            offset += limit
+            loadPokemonList(false)
+        }
     }
-
 
     fun performSearch() {
         val currentQuery = _searchQuery.value.trim()
         if (currentQuery.isNotBlank()) {
-            _stateUI.value = filterPokemon(currentQuery, _selectedFilters.value, _allPokemon.value)
-            if ((stateUI.value as? StateUI.Success)?.data?.isEmpty() == true) {
-                _isSearchingByName.update { true }
-                searchPokemonByName(currentQuery)
-            } else {
-                _isSearchingByName.update { false }
-            }
+            searchPokemonByName(currentQuery)
         } else {
-            _stateUI.value = filterPokemon("", _selectedFilters.value, _allPokemon.value)
+            filterAndUpdateState() // Apply filters to the full list
             _isSearchingByName.update { false }
         }
     }
 
     fun searchPokemonByName(pokemonName: String) {
-        var displayPokemon: Pokemon? = null
-        viewModelScope.launch{
-            _isLoading.value = true
+        viewModelScope.launch {
+            _isLoading.update { true }
             repository.getPokemonByName(pokemonName).collect { result ->
-                val fetchedPokemon = result.getOrErrorMessage()
-                    if (result is Result.Success) {
-                        displayPokemon = fetchedPokemon!!
-                        if (_searchQuery.value.trim() == pokemonName.trim()) {
-                                //Check for duplicates and add to allPokemon list and sort by id
-                                if (!_allPokemon.value.any { it.id == displayPokemon.id }) {
-                                    val updatedList = _allPokemon.value.toMutableList()
-                                    updatedList.add(displayPokemon)
-                                    _allPokemon.update { updatedList.sortedBy { it.id } }
-                                }
-                                val filteredResult = listOf(displayPokemon).filter { pokemon ->
-                                    val pokemonTypes = pokemon.types.map { it.type.name }
-                                    val lowerCaseFilters =
-                                        _selectedFilters.value.map { it.lowercase() }
-                                    lowerCaseFilters.isEmpty() || pokemonTypes.any { it in lowerCaseFilters }
-                                }
-                                _displayPokemonItems.value = filteredResult
-                                _stateUI.value = StateUI.Success(filteredResult)
-                                _isSearchingByName.update { false }
-
+                _isLoading.update { false }
+                when (result) {
+                    is Result.Success -> {
+                        result.data?.let { fetchedPokemon ->
+                            updatePokemonList(listOf(fetchedPokemon))
+                            filterAndUpdateState()
+                            _isSearchingByName.update { false }
+                        } ?: run {
+                            _stateUI.value = StateUI.Empty
+                            _isSearchingByName.update { false }
                         }
-                        _isLoading.value = false
-                    } else if (result is Result.Error) {
-
-                        Log.i("Error", "searchPokemonByName: Fetched Pokemon: $fetchedPokemon")
+                    }
+                    is Result.NotFoundError -> {
                         _stateUI.value = StateUI.Empty
-                        _isLoading.value = false
                         _isSearchingByName.update { false }
                     }
+                    is Result.NetworkError -> {
+                        _stateUI.value = Error(null)
+                        _isSearchingByName.update { false }
+                    }
+                    is Result.Error -> {
+                        Log.e(
+                            "PokemonViewModel",
+                            "Error searching by name: ${result.exception.message}"
+                        )
+                        _stateUI.value = Error("Search failed")
+                        _isSearchingByName.update { false }
+                    }
+
+                    Result.Loading -> _isLoading.update { true }
+                }
             }
         }
     }
 
-    private fun load() {
+    private fun loadInitialPokemon() {
+        loadPokemonList(true)
+    }
+
+    private fun loadPokemonList(isInitialLoad: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            _isLoading.update { true }
+            if (isInitialLoad) {
+                _stateUI.update { Loading }
+                _isLoading.update { true }
+            } else {
+                _isLoading.update { true }
+            }
             repository.getPokemonList(offset, limit).collect { result ->
-                if (result is Result.Success ){
-                    val newPokemonList = result.data ?: emptyList()
-                    _allPokemon.update {
-                        (it + newPokemonList).distinctBy { it.id }.sortedBy { it.id }
+                _isLoading.update { false }
+                when (result) {
+                    is Result.Success -> {
+                        result.data?.let { newPokemonList ->
+                            updatePokemonList(newPokemonList)
+                            filterAndUpdateState()
+                        } ?: run {
+                            if (isInitialLoad) _stateUI.value = Success(emptyList())
+                        }
                     }
-                    _stateUI.value = filterPokemon(
-                        _searchQuery.value,
-                        _selectedFilters.value,
-                        _allPokemon.value
-                    )
-                } else if (result is Result.Error) {
-                    _stateUI.value = StateUI.Error(null)
+
+                    is Result.NetworkError -> {
+                        _stateUI.value = Error(null)
+                    }
+
+                    is Result.NotFoundError -> {
+                        Log.i(
+                            "PokemonViewModel",
+                            "Pokemon list not found (unusual): ${result.exception.message}"
+                        )
+                        _stateUI.value = Error("Could not load Pokemon list.")
+                    }
+
+                    is Result.Error -> {
+                        Log.e(
+                            "PokemonViewModel",
+                            "Error loading Pokemon list: ${result.exception.message}"
+                        )
+                        _stateUI.value = Error("Failed to load Pokemon")
+                    }
+
+                    Result.Loading -> {
+                        if (isInitialLoad) _stateUI.update { Loading } else _isLoading.update { true }
+                    }
+
                 }
             }
-            _isLoading.update { false }
-            Log.i("isSearchingByName", "load: ${_isSearchingByName.value}")
         }
+    }
+
+    private fun updatePokemonList(newPokemonList: List<Pokemon>) {
+        _allPokemon.update { (it + newPokemonList).distinctBy { it.id }.sortedBy { it.id } }
+    }
+
+    private fun filterAndUpdateState() {
+        _stateUI.value =
+            filterPokemon(_searchQuery.value, _selectedFilters.value, _allPokemon.value)
     }
 
     private fun filterPokemon(
@@ -152,18 +190,22 @@ class PokemonViewModel @Inject constructor(
         filters: Set<String>,
         allPokemon: List<Pokemon>
     ): StateUI<List<Pokemon>> {
-
+        val lowerCaseQuery = query.trim().lowercase()
         val lowerCaseFilters = filters.map { it.lowercase() }
-        val filteredList = allPokemon.filter { pokemon ->
-            val pokemonTypes = pokemon.types.map { it.type.name }
-            val matchesQuery =
-                query.isBlank() || pokemon.name.contentEquals(query, ignoreCase = true)
-            val matchesFilters =
-                lowerCaseFilters.isEmpty() || pokemonTypes.any { it in lowerCaseFilters }
 
-            matchesQuery && matchesFilters
+        val filteredList = allPokemon.filter { pokemon ->
+            val nameMatches = pokemon.name.lowercase().contains(lowerCaseQuery)
+            val typeMatches = lowerCaseFilters.isEmpty() || pokemon.types.any {
+                it.type.name.lowercase() in lowerCaseFilters
+            }
+            nameMatches && typeMatches
         }
-       return StateUI.Success(filteredList)
+
+        return if (filteredList.isEmpty() && query.isNotBlank() && !_isSearchingByName.value) {
+            StateUI.Empty
+        } else {
+            Success(filteredList)
+        }
     }
 }
 

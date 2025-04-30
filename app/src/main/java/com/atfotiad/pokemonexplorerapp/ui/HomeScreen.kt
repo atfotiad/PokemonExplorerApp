@@ -1,6 +1,10 @@
 package com.atfotiad.pokemonexplorerapp.ui
 
-import androidx.compose.animation.AnimatedVisibility
+import android.annotation.SuppressLint
+import android.util.Log
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
@@ -54,13 +58,17 @@ import com.atfotiad.pokemonexplorerapp.utils.types
 import kotlinx.coroutines.FlowPreview
 
 
-@OptIn(ExperimentalLayoutApi::class, FlowPreview::class)
+@SuppressLint("ConfigurationScreenWidthHeight", "UnrememberedMutableState")
+@OptIn(ExperimentalLayoutApi::class, FlowPreview::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeScreen(
+    transitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     modifier: Modifier = Modifier,
     pokemonViewModel: PokemonViewModel,
     onPokemonClick: (Pokemon) -> Unit
 ) {
+
     val totalCount by pokemonViewModel.totalPokemonCount.collectAsStateWithLifecycle()
     val text by pokemonViewModel.searchQuery.collectAsStateWithLifecycle()
     val selectedFilters by pokemonViewModel.selectedFilters.collectAsStateWithLifecycle()
@@ -71,53 +79,44 @@ fun HomeScreen(
     val isSearchingByName by pokemonViewModel.isSearchingByName.collectAsStateWithLifecycle()
     val stateUI by pokemonViewModel.stateUI.collectAsStateWithLifecycle()
 
-    val displayPokemonItems = remember(stateUI) {
-        if (stateUI is StateUI.Success) {
-            (stateUI as StateUI.Success).data
-        } else {
-            emptyList()
-        }
-    }
-
-    val shouldShowLoadMoreButton by rememberUpdatedState {
+    // Derive displayPokemonItems directly from stateUI
+    val displayPokemonItems: List<Pokemon> by remember(stateUI) {
         derivedStateOf {
-            !isLoading &&
-                    displayPokemonItems.size < totalCount &&
-                    !isSearchingByName &&
-                    displayPokemonItems.size != totalCount && text.isEmpty()
+            if (stateUI is StateUI.Success) {
+                (stateUI as StateUI.Success<List<Pokemon>>).data
+            } else {
+                emptyList()
+            }
         }
     }
 
-    val shouldShowEndOfResults by rememberUpdatedState {
-        derivedStateOf {
-            !isLoading &&
-                    displayPokemonItems.isNotEmpty() &&
-                    displayPokemonItems.size == totalCount &&
-                    !isSearchingByName && text.isEmpty()
-        }
-    }
+    val shouldShowLoadMoreButton by rememberUpdatedState(derivedStateOf {
+        !isLoading &&
+                displayPokemonItems.size < totalCount &&
+                text.isEmpty() &&
+                !isSearchingByName &&
+                stateUI !is StateUI.Error &&
+                stateUI !is StateUI.Loading
+    })
 
-    val shouldShowNoPokemonFound by rememberUpdatedState {
-        derivedStateOf {
-            !isLoading &&
-                    displayPokemonItems.isEmpty() &&
-                    !isSearchingByName && text.isNotEmpty()
-        }
-    }
+    val shouldShowEndOfResults by rememberUpdatedState(derivedStateOf {
+        !isLoading &&
+                displayPokemonItems.isNotEmpty() &&
+                displayPokemonItems.size == totalCount &&
+                text.isEmpty() &&
+                selectedFilters.isEmpty()
+    })
 
-    val imeBottom = WindowInsets.ime.getBottom(density = LocalDensity.current)
+    val shouldShowNoPokemonFound by rememberUpdatedState(derivedStateOf {
+        !isLoading &&
+                displayPokemonItems.isEmpty() &&
+                text.isNotEmpty() &&
+                !isSearchingByName
+    })
+
+    val imeBottom = WindowInsets.ime.getBottom(LocalDensity.current)
     var isFocused by remember { mutableStateOf(false) }
-    var isInitialLoading by remember { mutableStateOf(true) }
 
-    LaunchedEffect(isLoading, displayPokemonItems.isNotEmpty()) {
-        if (!isLoading && displayPokemonItems.isNotEmpty()) {
-            isInitialLoading = false
-        } else if (isLoading && displayPokemonItems.isEmpty()) {
-            isInitialLoading = true
-        }
-    }
-
-    //Effect for handling ime bottom minimizing and restoring focus.
     LaunchedEffect(imeBottom) {
         if (imeBottom == 0 && isFocused) {
             isFocused = false
@@ -126,8 +125,7 @@ fun HomeScreen(
         }
     }
 
-    Scaffold()
-    { paddingValues ->
+    Scaffold { paddingValues ->
         ConstraintLayout(
             modifier = modifier
                 .fillMaxSize()
@@ -135,16 +133,16 @@ fun HomeScreen(
                 .padding(paddingValues)
                 .focusable()
         ) {
-            val (searchBox, filterRow, list) = createRefs()
+            val (searchBox, filterRow, listContent) = createRefs()
 
             val searchBoxWidth: Dp by animateDpAsState(
-                targetValue = if (isFocused) LocalConfiguration.current.screenWidthDp.dp - 32.dp else 300.dp,
+                targetValue = if (isFocused) LocalConfiguration.current.screenWidthDp.dp - 64.dp else 300.dp,
                 animationSpec = spring()
             )
 
             SearchField(
                 text = text,
-                onTextChange = { pokemonViewModel.setSearchQuery(it) },
+                onTextChange = pokemonViewModel::setSearchQuery,
                 onTrailingIconClick = {
                     pokemonViewModel.setSearchQuery("")
                     pokemonViewModel.performSearch()
@@ -174,7 +172,6 @@ fun HomeScreen(
                     }
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
-
             ) {
                 if (selectedFilters.isNotEmpty()) {
                     Row(
@@ -188,22 +185,15 @@ fun HomeScreen(
                         }
                     }
                 }
-
                 for (type in types) {
                     FilterChip(
                         selected = selectedFilters.contains(type),
                         onClick = {
-                            val newSelectedFilters = if (selectedFilters.contains(type)) {
-                                selectedFilters.filter { it != type }.toSet()
-                            } else {
-                                selectedFilters + type
-                            }
-                            pokemonViewModel.updateFilters(newSelectedFilters)
-
+                            pokemonViewModel.updateFilters(
+                                if (selectedFilters.contains(type)) selectedFilters - type else selectedFilters + type
+                            )
                         },
-                        label = {
-                            Text(text = type)
-                        },
+                        label = { Text(text = type) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = typeColorMap[type]!!,
                             containerColor = Color.Transparent,
@@ -211,48 +201,73 @@ fun HomeScreen(
                             selectedLabelColor = Color.White
                         ),
                         border = BorderStroke(1.dp, typeColorMap[type]!!),
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
+                        modifier = Modifier.padding(horizontal = 4.dp)
                     )
                 }
             }
-            PokemonList(
+
+            Box(
                 modifier = Modifier
-                    .constrainAs(list) {
+                    .constrainAs(listContent) {
                         top.linkTo(filterRow.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         bottom.linkTo(parent.bottom)
                         height = Dimension.fillToConstraints
                         width = Dimension.fillToConstraints
-                    },
-                list = displayPokemonItems,
-                listState = listState,
-                onClick = {
-                    onPokemonClick(it)
-                },
-                isLoading = isLoading,
-                onLoadMore = { pokemonViewModel.loadMore() },
-                shouldShowLoadMoreButton = shouldShowLoadMoreButton(),
-                shouldShowEndOfResults = shouldShowEndOfResults(),
-                shouldShowNoPokemonFound = shouldShowNoPokemonFound()
-            )
-
-            AnimatedVisibility(
-                visible = isLoading && displayPokemonItems.isEmpty(),
-                modifier = Modifier.constrainAs(list) {
-                    top.linkTo(filterRow.bottom)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    height = Dimension.fillToConstraints
-                }
+                    }
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+                when (stateUI) {
+                    is StateUI.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is StateUI.Success -> {
+                        PokemonList(
+                            sharedTransitionScope = transitionScope,
+                            animatedContentScope = animatedContentScope,
+                            list = displayPokemonItems,
+                            listState = listState,
+                            onClick = onPokemonClick,
+                            isLoading = isLoading,
+                            onLoadMore = pokemonViewModel::loadMore,
+                            shouldShowLoadMoreButton = shouldShowLoadMoreButton,
+                            shouldShowEndOfResults = shouldShowEndOfResults,
+                            shouldShowNoPokemonFound = shouldShowNoPokemonFound,
+                        )
+                    }
+
+                    is StateUI.Error -> {
+                        Log.i("Error", "HomeScreen: ${(stateUI as StateUI.Error)}")
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = (stateUI as StateUI.Error).message ?: "An error occurred"
+                            )
+                        }
+                    }
+
+                    is StateUI.Empty -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (text.isNotEmpty()) {
+                                Text(text = "No Pokemon found matching your search.")
+                            } else if (selectedFilters.isNotEmpty() && displayPokemonItems.isEmpty()) {
+                                Text(text = "No Pokemon found with the selected filters.")
+                            } else {
+                                Text(text = "No Pokemon available.")
+                            }
+                        }
+                    }
                 }
             }
         }

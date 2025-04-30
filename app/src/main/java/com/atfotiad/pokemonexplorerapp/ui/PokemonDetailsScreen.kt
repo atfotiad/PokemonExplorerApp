@@ -5,12 +5,13 @@ import android.media.MediaPlayer
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidthIn
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -36,9 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.atfotiad.pokemonexplorerapp.R
 import com.atfotiad.pokemonexplorerapp.model.Pokemon
-import com.atfotiad.pokemonexplorerapp.model.Species
+import com.atfotiad.pokemonexplorerapp.utils.typeToResourceMap
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -55,16 +55,7 @@ fun PokemonDetailsScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isMediaPlayerReady by viewModel.isMediaPlayerReady.collectAsStateWithLifecycle()
-    val pokemon = state ?: Pokemon(
-        0,
-        "",
-        emptyList(),
-        emptyList(),
-        Species("", ""),
-        "",
-        "",
-        ""
-    )
+    val pokemon = state ?: emptyPokemon
     var mediaPlayer = remember { MediaPlayer() }
 
     LaunchedEffect(key1 = state) {
@@ -110,26 +101,6 @@ fun PokemonCard(
     isMediaPlayerReady: Boolean,
     onPlayCry: () -> Unit
 ) {
-    val typeToResourceMap = mapOf(
-        "fire" to R.drawable.fire,
-        "water" to R.drawable.water,
-        "grass" to R.drawable.grass,
-        "electric" to R.drawable.electric,
-        "poison" to R.drawable.poison,
-        "normal" to R.drawable.normal,
-        "psychic" to R.drawable.psychic,
-        "rock" to R.drawable.rock,
-        "ghost" to R.drawable.ghost,
-        "ice" to R.drawable.ice,
-        "ground" to R.drawable.ground,
-        "flying" to R.drawable.flying,
-        "fighting" to R.drawable.fighting,
-        "bug" to R.drawable.bug,
-        "steel" to R.drawable.steel,
-        "dragon" to R.drawable.dragon,
-        "dark" to R.drawable.dark,
-        "fairy" to R.drawable.fairy
-    )
 
     Card(
         modifier = modifier
@@ -144,11 +115,13 @@ fun PokemonCard(
                 .padding(top = 8.dp, start = 8.dp, end = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = modifier.fillMaxWidth()
-            ) {
+            BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+                val maxWidth = this.maxWidth
                 Text(
-                    modifier = modifier.align(Alignment.TopCenter),
+                    modifier = modifier
+                        .align(Alignment.TopCenter)
+                        .padding(end = 40.dp)
+                        .requiredWidthIn(max = maxWidth * 0.8f),
                     text = pokemon.name.replaceFirstChar {
                         if (it.isLowerCase())
                             it.titlecase(Locale.getDefault())
@@ -170,7 +143,6 @@ fun PokemonCard(
                     }
                 }
             }
-
             GlideImage(
                 model = pokemon.imageUrl,
                 contentDescription = "Pokemon Image",

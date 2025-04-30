@@ -1,5 +1,8 @@
 package com.atfotiad.pokemonexplorerapp.ui
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -18,9 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.atfotiad.pokemonexplorerapp.model.Pokemon
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun PokemonList(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     modifier: Modifier = Modifier,
     list: List<Pokemon>,
     listState: LazyListState,
@@ -33,7 +38,7 @@ fun PokemonList(
 ) {
     LazyColumn(modifier = modifier.animateContentSize(), state = listState) {
         items(list, key = { pokemon -> pokemon.id }) { pokemon ->
-            PokemonItem(
+            PokemonItem(sharedTransitionScope, animatedContentScope,
                 pokemon = pokemon,
             ) {
                 onClick(pokemon)
@@ -47,7 +52,7 @@ fun PokemonList(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (isLoading && list.isNotEmpty()) {
+                if (isLoading) {
                     CircularProgressIndicator()
                 }
                 if (shouldShowLoadMoreButton.value) {

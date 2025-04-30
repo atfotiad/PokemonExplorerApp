@@ -2,6 +2,9 @@ package com.atfotiad.pokemonexplorerapp.ui
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -47,8 +50,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun PokemonDetailsScreen(
+    transitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     modifier: Modifier = Modifier,
     viewModel: PokemonDetailsViewModel
 ) {
@@ -87,15 +93,23 @@ fun PokemonDetailsScreen(
             .safeDrawingPadding()
             .verticalScroll(rememberScrollState(), true)
     ) {
-        PokemonCard(pokemon = pokemon, modifier, isMediaPlayerReady) {
+        PokemonCard(
+            transitionScope,
+            animatedContentScope,
+            pokemon = pokemon,
+            modifier,
+            isMediaPlayerReady
+        ) {
             viewModel.playCry()
         }
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun PokemonCard(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     pokemon: Pokemon,
     modifier: Modifier = Modifier,
     isMediaPlayerReady: Boolean,
@@ -117,20 +131,26 @@ fun PokemonCard(
         ) {
             BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
                 val maxWidth = this.maxWidth
-                Text(
-                    modifier = modifier
-                        .align(Alignment.TopCenter)
-                        .padding(end = 40.dp)
-                        .requiredWidthIn(max = maxWidth * 0.8f),
-                    text = pokemon.name.replaceFirstChar {
-                        if (it.isLowerCase())
-                            it.titlecase(Locale.getDefault())
-                        else it.toString()
-                    },
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+                with(sharedTransitionScope) {
+                    Text(
+                        modifier = modifier
+                            .align(Alignment.TopCenter)
+                            .padding(end = 40.dp)
+                            .requiredWidthIn(max = maxWidth * 0.8f)
+                            .sharedElement(
+                                sharedTransitionScope.rememberSharedContentState(key = pokemon.name),
+                                animatedContentScope
+                            ),
+                        text = pokemon.name.replaceFirstChar {
+                            if (it.isLowerCase())
+                                it.titlecase(Locale.getDefault())
+                            else it.toString()
+                        },
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                }
                 Row(modifier = modifier.align(Alignment.TopEnd)) {
                     for (type in pokemon.types) {
                         typeToResourceMap[type.type.name]?.let {
@@ -143,17 +163,23 @@ fun PokemonCard(
                     }
                 }
             }
-            GlideImage(
-                model = pokemon.imageUrl,
-                contentDescription = "Pokemon Image",
-                modifier = modifier
-                    .fillMaxWidth()
-                    .size(250.dp)
-                    .padding(8.dp)
-                    .border(2.dp, MaterialTheme.colorScheme.onSurface, RectangleShape),
-                contentScale = ContentScale.Fit,
-            ) {
-                it.apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+            with(sharedTransitionScope) {
+                GlideImage(
+                    model = pokemon.imageUrl,
+                    contentDescription = "Pokemon Image",
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .size(250.dp)
+                        .padding(8.dp)
+                        .border(2.dp, MaterialTheme.colorScheme.onSurface, RectangleShape)
+                        .sharedElement(
+                            sharedTransitionScope.rememberSharedContentState(key = pokemon.id),
+                            animatedContentScope
+                        ),
+                    contentScale = ContentScale.Fit,
+                ) {
+                    it.apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                }
             }
 
             Row(

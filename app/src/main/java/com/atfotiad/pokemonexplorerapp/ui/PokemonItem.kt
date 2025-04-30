@@ -1,5 +1,8 @@
 package com.atfotiad.pokemonexplorerapp.ui
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -21,9 +24,11 @@ import com.atfotiad.pokemonexplorerapp.model.Pokemon
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun PokemonItem(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     modifier: Modifier = Modifier,
     pokemon: Pokemon,
     onPokemonClick: (Pokemon) -> Unit
@@ -37,22 +42,32 @@ fun PokemonItem(
         shape = RoundedCornerShape(15.dp)
     ) {
         Row(modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            GlideImage(
-                model = pokemon.imageUrl,
-                contentDescription = pokemon.name,
-                modifier = modifier
-                    .size(50.dp)
-                    .clip(CircleShape)
-                    .border(2.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
-                    .padding(8.dp)
-            )
-            Text(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp),
-                text = pokemon.name,
-                textAlign = TextAlign.Center
-            )
+            with(sharedTransitionScope) {
+                GlideImage(
+                    model = pokemon.imageUrl,
+                    contentDescription = pokemon.name,
+                    modifier = modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+                        .padding(8.dp)
+                        .sharedElement(
+                            sharedTransitionScope.rememberSharedContentState(key = pokemon.id),
+                            animatedContentScope
+                        )
+                )
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp)
+                        .sharedElement(
+                            sharedTransitionScope.rememberSharedContentState(key = pokemon.name),
+                            animatedContentScope
+                        ),
+                    text = pokemon.name,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

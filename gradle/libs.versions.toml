@@ -1,5 +1,7 @@
 [versions]
+accompanistNavigationMaterial = "0.34.0"
 agp = "8.9.1"
+animationCore = "1.8.0"
 compose = "1.0.0-beta01"
 constraintlayoutComposeAndroid = "1.1.1"
 converterGson = "2.11.0"
@@ -22,6 +24,8 @@ pagingRuntime = "3.3.6"
 retrofit = "2.11.0"
 
 [libraries]
+accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanistNavigationMaterial" }
+androidx-animation-core = { module = "androidx.compose.animation:animation-core", version.ref = "animationCore" }
 androidx-constraintlayout-compose-android = { module = "androidx.constraintlayout:constraintlayout-compose-android", version.ref = "constraintlayoutComposeAndroid" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }

@@ -57,6 +57,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose.android)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
+    implementation (libs.androidx.animation.core)
+    implementation (libs.accompanist.navigation.material)
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.retrofit)

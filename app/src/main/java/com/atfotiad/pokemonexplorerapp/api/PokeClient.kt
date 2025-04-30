@@ -24,6 +24,11 @@ interface PokeClient {
         @Path("id") id: Int
     ): Response<PokemonResponse>
 
+    @GET("pokemon/{name}")
+    suspend fun getPokemonInfoByName(
+        @Path("name") name: String
+    ): Response<PokemonResponse>
+
     @GET("pokemon-species/{id}")
     suspend fun getSpeciesEntry(
         @Path("id") id: Int

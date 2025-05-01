@@ -1,7 +1,6 @@
 package com.atfotiad.pokemonexplorerapp.ui.homeScreen
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -103,8 +102,7 @@ fun HomeScreen(
         !isLoading &&
                 displayPokemonItems.isNotEmpty() &&
                 displayPokemonItems.size == totalCount &&
-                text.isEmpty() &&
-                selectedFilters.isEmpty()
+                text.isEmpty()
     })
 
     val shouldShowNoPokemonFound by rememberUpdatedState(derivedStateOf {
@@ -217,58 +215,27 @@ fun HomeScreen(
                         width = Dimension.fillToConstraints
                     }
             ) {
-                when (stateUI) {
-                    is StateUI.Loading -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-
-                    is StateUI.Success -> {
-                        PokemonList(
-                            sharedTransitionScope = transitionScope,
-                            animatedContentScope = animatedContentScope,
-                            list = displayPokemonItems,
-                            listState = listState,
-                            onClick = onPokemonClick,
-                            isLoading = isLoading,
-                            onLoadMore = pokemonViewModel::loadMore,
-                            shouldShowLoadMoreButton = shouldShowLoadMoreButton,
-                            shouldShowEndOfResults = shouldShowEndOfResults,
-                            shouldShowNoPokemonFound = shouldShowNoPokemonFound,
-                        )
-                    }
-
-                    is StateUI.Error -> {
-                        Log.i("Error", "HomeScreen: ${(stateUI as StateUI.Error)}")
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = (stateUI as StateUI.Error).message ?: "An error occurred"
-                            )
-                        }
-                    }
-
-                    is StateUI.Empty -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (text.isNotEmpty()) {
-                                Text(text = "No Pokemon found matching your search.")
-                            } else if (selectedFilters.isNotEmpty() && displayPokemonItems.isEmpty()) {
-                                Text(text = "No Pokemon found with the selected filters.")
-                            } else {
-                                Text(text = "No Pokemon available.")
-                            }
-                        }
+                if (stateUI == StateUI.Loading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
                 }
+                PokemonList(
+                    sharedTransitionScope = transitionScope,
+                    animatedContentScope = animatedContentScope,
+                    list = displayPokemonItems,
+                    listState = listState,
+                    onClick = onPokemonClick,
+                    isLoading = isLoading,
+                    onLoadMore = pokemonViewModel::loadMore,
+                    shouldShowLoadMoreButton = shouldShowLoadMoreButton,
+                    shouldShowEndOfResults = shouldShowEndOfResults,
+                    shouldShowNoPokemonFound = shouldShowNoPokemonFound,
+                    stateUI = stateUI
+                )
             }
         }
     }

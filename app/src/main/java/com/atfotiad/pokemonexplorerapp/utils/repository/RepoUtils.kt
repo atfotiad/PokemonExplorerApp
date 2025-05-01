@@ -18,7 +18,7 @@ object RepoUtils {
         } catch (e: IOException) {
             Result.NetworkError(e)
         } catch (t: Throwable) {
-            Result.Error(Exception(t))
+            Result.Error(t)
         }
     }
 
@@ -72,10 +72,10 @@ sealed class Result<out T : Any> {
     data class Success<out T : Any>(val data: T?) : Result<T>()
 
     /** Represents a generic error. */
-    data class Error(val exception: Exception) : Result<Nothing>()
+    data class Error(val exception: Throwable) : Result<Nothing>()
 
     /** Represents a network-related error (e.g., no internet). */
-    data class NetworkError(val exception: Exception) : Result<Nothing>()
+    data class NetworkError(val exception: IOException) : Result<Nothing>()
 
     /** Represents a "Not Found" error (e.g., HTTP 404). */
     data class NotFoundError(val exception: Exception) : Result<Nothing>()

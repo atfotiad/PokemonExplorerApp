@@ -6,6 +6,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,7 +35,8 @@ fun PokemonList(
     onLoadMore: () -> Unit,
     shouldShowLoadMoreButton: State<Boolean>,
     shouldShowEndOfResults: State<Boolean>,
-    shouldShowNoPokemonFound: State<Boolean>
+    shouldShowNoPokemonFound: State<Boolean>,
+    stateUI: StateUI<List<Pokemon>>
 ) {
     LazyColumn(modifier = modifier.animateContentSize(), state = listState) {
         items(list, key = { pokemon -> pokemon.id }) { pokemon ->
@@ -53,17 +55,34 @@ fun PokemonList(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator()
-                }
-                if (shouldShowLoadMoreButton.value) {
-                    Button(onClick = onLoadMore) { Text("Load More") }
-                }
-                if (shouldShowEndOfResults.value) {
-                    Text("End of Results")
-                }
-                if (shouldShowNoPokemonFound.value) {
-                    Text("No Pokemon Found")
+                if (stateUI is StateUI.Success) {
+                    if (isLoading) {
+                        CircularProgressIndicator()
+                    }
+                    if (shouldShowLoadMoreButton.value) {
+                        Button(onClick = onLoadMore) { Text("Load More") }
+                    }
+                    if (shouldShowEndOfResults.value) {
+                        Text("End of Results")
+                    }
+                    if (shouldShowNoPokemonFound.value) {
+                        Text("No Pokemon Found")
+                    }
+                } else if (stateUI is StateUI.Error) {
+                    if (isLoading) {
+                        CircularProgressIndicator()
+                    }
+                    if (!isLoading) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("No internet connection")
+                            Button(onClick = onLoadMore) { Text("Retry") }
+                        }
+                    }
+
+                } else if (stateUI is StateUI.Empty) {
+                    Column {
+                        Text("No Pokemon Found")
+                    }
                 }
             }
         }

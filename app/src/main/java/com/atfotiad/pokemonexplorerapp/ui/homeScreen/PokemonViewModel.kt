@@ -76,9 +76,9 @@ class PokemonViewModel @Inject constructor(
     fun loadMore() {
         if (!_isLoading.value) {
             if (networkChecker.isInternetAvailable()) {
-                if (_allPokemon.value.isEmpty()){
+                if (_allPokemon.value.isEmpty()) {
                     loadInitialPokemon()
-                } else{
+                } else {
                     offset += limit
                     loadPokemonList(false)
                 }

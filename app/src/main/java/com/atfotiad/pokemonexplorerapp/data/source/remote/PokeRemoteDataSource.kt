@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PokeRemoteDataSource @Inject constructor(
+open class PokeRemoteDataSource @Inject constructor(
     private val pokeApi: PokeClient
 ) {
     suspend fun getPokemonList(offset: Int, limit: Int): Result<BaseResponse> {

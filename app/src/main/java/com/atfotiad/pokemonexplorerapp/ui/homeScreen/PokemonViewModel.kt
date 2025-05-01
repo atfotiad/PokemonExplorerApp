@@ -3,12 +3,13 @@ package com.atfotiad.pokemonexplorerapp.ui.homeScreen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.atfotiad.pokemonexplorerapp.data.repository.PokeRepository
 import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
 import com.atfotiad.pokemonexplorerapp.data.model.Species
+import com.atfotiad.pokemonexplorerapp.data.repository.PokeRepository
 import com.atfotiad.pokemonexplorerapp.ui.homeScreen.StateUI.Error
 import com.atfotiad.pokemonexplorerapp.ui.homeScreen.StateUI.Loading
 import com.atfotiad.pokemonexplorerapp.ui.homeScreen.StateUI.Success
+import com.atfotiad.pokemonexplorerapp.utils.network.NetworkConnectivityChecker
 import com.atfotiad.pokemonexplorerapp.utils.repository.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PokemonViewModel @Inject constructor(
-    private val repository: PokeRepository
+    private val repository: PokeRepository,
+    private val networkChecker: NetworkConnectivityChecker
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -30,7 +32,7 @@ class PokemonViewModel @Inject constructor(
     private val _selectedFilters = MutableStateFlow<Set<String>>(emptySet())
     val selectedFilters: StateFlow<Set<String>> = _selectedFilters.asStateFlow()
 
-    private val _stateUI = MutableStateFlow<StateUI<List<Pokemon>>>(Loading)
+    private val _stateUI = MutableStateFlow<StateUI<List<Pokemon>>>(StateUI.Empty)
     val stateUI: StateFlow<StateUI<List<Pokemon>>> = _stateUI.asStateFlow()
 
     private val _isSearchingByName = MutableStateFlow(false)
@@ -46,7 +48,11 @@ class PokemonViewModel @Inject constructor(
     private val limit = 10
 
     init {
-        loadInitialPokemon()
+        if (networkChecker.isInternetAvailable()) {
+            loadInitialPokemon()
+        } else {
+            _stateUI.value = Error(null)
+        }
     }
 
     fun setSearchQuery(query: String) {
@@ -69,8 +75,16 @@ class PokemonViewModel @Inject constructor(
 
     fun loadMore() {
         if (!_isLoading.value) {
-            offset += limit
-            loadPokemonList(false)
+            if (networkChecker.isInternetAvailable()) {
+                if (_allPokemon.value.isEmpty()){
+                    loadInitialPokemon()
+                } else{
+                    offset += limit
+                    loadPokemonList(false)
+                }
+            } else {
+                _stateUI.value = Error(null)
+            }
         }
     }
 
@@ -79,7 +93,7 @@ class PokemonViewModel @Inject constructor(
         if (currentQuery.isNotBlank()) {
             searchPokemonByName(currentQuery)
         } else {
-            filterAndUpdateState() // Apply filters to the full list
+            filterAndUpdateState()
             _isSearchingByName.update { false }
         }
     }
@@ -100,14 +114,17 @@ class PokemonViewModel @Inject constructor(
                             _isSearchingByName.update { false }
                         }
                     }
+
                     is Result.NotFoundError -> {
                         _stateUI.value = StateUI.Empty
                         _isSearchingByName.update { false }
                     }
+
                     is Result.NetworkError -> {
                         _stateUI.value = Error(null)
                         _isSearchingByName.update { false }
                     }
+
                     is Result.Error -> {
                         Log.e(
                             "PokemonViewModel",
@@ -201,7 +218,7 @@ class PokemonViewModel @Inject constructor(
             nameMatches && typeMatches
         }
 
-        return if (filteredList.isEmpty() && query.isNotBlank() && !_isSearchingByName.value) {
+        return if (filteredList.isEmpty() && query.isNotBlank()) {
             StateUI.Empty
         } else {
             Success(filteredList)

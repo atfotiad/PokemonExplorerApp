@@ -11,6 +11,10 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
+/**
+ *  [PokemonDetailsViewModel] is a class that handles the state for the Pokemon details screen.
+ *  @param savedStateHandle is an instance of [SavedStateHandle]
+ * */
 class PokemonDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {

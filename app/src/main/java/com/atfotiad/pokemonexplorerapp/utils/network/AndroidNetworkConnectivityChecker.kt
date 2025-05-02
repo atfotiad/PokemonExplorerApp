@@ -7,7 +7,10 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-
+/**
+ * [AndroidNetworkConnectivityChecker] is a class that implements [NetworkConnectivityChecker]
+ * Checks if internet is available
+ * */
 class AndroidNetworkConnectivityChecker @Inject constructor(
     @ApplicationContext private val appContext: Context
 ) : NetworkConnectivityChecker {

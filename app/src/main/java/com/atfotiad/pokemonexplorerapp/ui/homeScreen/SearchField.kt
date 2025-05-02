@@ -17,6 +17,15 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.ImeAction
 
 @Composable
+/**
+ *  [SearchField] is a composable function that displays a search field.
+ *  @param text is a string that represents the current text in the search field
+ *  @param onTextChange is a lambda function that is called when the text in the search field changes
+ *  @param onTrailingIconClick is a lambda function that is called when the trailing icon is clicked
+ *  @param onSearch is a lambda function that is called when the search button is clicked
+ *  @param modifier is an instance of [Modifier]
+ *  @param onFocusChanged is a lambda function that is called when the focus state of the search field changes
+ * */
 fun SearchField(
     text: String,
     onTextChange: (String) -> Unit,

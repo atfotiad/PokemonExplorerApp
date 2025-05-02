@@ -21,6 +21,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
+/**
+ *  [PokemonViewModel] is a [ViewModel] that provides data for the home screen.
+ *  @param repository is an instance of [PokeRepository]
+ *  @param networkChecker is an instance of [NetworkConnectivityChecker]
+ * */
 class PokemonViewModel @Inject constructor(
     private val repository: PokeRepository,
     private val networkChecker: NetworkConnectivityChecker
@@ -38,6 +43,7 @@ class PokemonViewModel @Inject constructor(
     private val _isSearchingByName = MutableStateFlow(false)
     val isSearchingByName: StateFlow<Boolean> = _isSearchingByName.asStateFlow()
 
+    // Loading state for the list helps show the indicator when loading more
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
@@ -55,6 +61,11 @@ class PokemonViewModel @Inject constructor(
         }
     }
 
+    /**
+     *  [setSearchQuery] is a function that updates the search query.
+     *  @param query is a string that represents the new search query
+     *  Re-filters when query is cleared
+     * */
     fun setSearchQuery(query: String) {
         _searchQuery.update { query }
         _isSearchingByName.value = query.isNotBlank()
@@ -63,16 +74,31 @@ class PokemonViewModel @Inject constructor(
         }
     }
 
+    /**
+     *  [updateFilters] is a function that updates the selected filters.
+     *  @param selectedFilters is a set of strings that represents the new selected filters
+     *  Filters and updates the state accordingly
+     * */
     fun updateFilters(selectedFilters: Set<String>) {
         _selectedFilters.update { selectedFilters }
         filterAndUpdateState()
     }
 
+    /**
+     *  [clearAllFilters] is a function that clears all filters.
+     *  Filters and updates the state accordingly
+     * */
     fun clearAllFilters() {
         _selectedFilters.update { emptySet() }
         filterAndUpdateState()
     }
 
+    /***
+     *  [loadMore] is a function that loads more data.
+     *  Loads the unfiltered next 10 pokemon
+     *  If filters are on,
+     *  it loads the pokemon that match any filter out of the unfiltered list
+     * */
     fun loadMore() {
         if (!_isLoading.value) {
             if (networkChecker.isInternetAvailable()) {
@@ -88,6 +114,10 @@ class PokemonViewModel @Inject constructor(
         }
     }
 
+    /**
+     * [performSearch] is a function that performs search in the the api
+     * if query is not blank searches by name. If query is Blank filters and Updates the state.
+     * */
     fun performSearch() {
         val currentQuery = _searchQuery.value.trim()
         if (currentQuery.isNotBlank()) {
@@ -98,6 +128,11 @@ class PokemonViewModel @Inject constructor(
         }
     }
 
+    /**
+     *  [searchPokemonByName] is a function that searches by Name.
+     *  - Requires a full name of the pokemon.
+     *  @param pokemonName the Full Name of the pokemon to search.
+     * */
     fun searchPokemonByName(pokemonName: String) {
         viewModelScope.launch {
             _isLoading.update { true }
@@ -143,7 +178,10 @@ class PokemonViewModel @Inject constructor(
     private fun loadInitialPokemon() {
         loadPokemonList(true)
     }
-
+/**
+ *  [loadPokemonList] is a function that loads pokemon.
+ *  @param isInitialLoad is a [Boolean] to specify if we are initial loading.
+ * */
     private fun loadPokemonList(isInitialLoad: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             if (isInitialLoad) {
@@ -202,6 +240,12 @@ class PokemonViewModel @Inject constructor(
             filterPokemon(_searchQuery.value, _selectedFilters.value, _allPokemon.value)
     }
 
+    /**
+     *  [filterPokemon] is the main function that filters pokemon by type.
+     *  @param [query] The pokemon to search. Supports partial name
+     *  @param [filters] A [Set] of selected filters
+     *  @param [allPokemon] The pokemon list unfiltered loaded so far
+     * */
     private fun filterPokemon(
         query: String,
         filters: Set<String>,
@@ -226,6 +270,9 @@ class PokemonViewModel @Inject constructor(
     }
 }
 
+/**
+ *  [StateUI] is a sealed class that represents the state of the UI.
+ * */
 sealed class StateUI<out T> {
     object Loading : StateUI<Nothing>()
     data class Success<T>(val data: T) : StateUI<T>()
@@ -233,6 +280,9 @@ sealed class StateUI<out T> {
     object Empty : StateUI<Nothing>()
 }
 
+/**
+ * [emptyPokemon] is an empty instance of [Pokemon]
+ * */
 val emptyPokemon = Pokemon(
     0,
     "",

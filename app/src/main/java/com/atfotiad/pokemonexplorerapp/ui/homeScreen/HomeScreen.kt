@@ -60,6 +60,14 @@ import kotlinx.coroutines.FlowPreview
 @SuppressLint("ConfigurationScreenWidthHeight", "UnrememberedMutableState")
 @OptIn(ExperimentalLayoutApi::class, FlowPreview::class, ExperimentalSharedTransitionApi::class)
 @Composable
+/**
+ * [HomeScreen] is a composable function that displays the list of Pokemon.]
+ * @param transitionScope is an instance of [SharedTransitionScope]
+ * @param animatedContentScope is an instance of [AnimatedContentScope]
+ * @param modifier is an instance of [Modifier]
+ * @param pokemonViewModel is an instance of [PokemonViewModel]
+ * @param onPokemonClick is a lambda function that is called when a Pokemon is clicked
+ * */
 fun HomeScreen(
     transitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
@@ -115,6 +123,7 @@ fun HomeScreen(
     val imeBottom = WindowInsets.ime.getBottom(LocalDensity.current)
     var isFocused by remember { mutableStateOf(false) }
 
+//Launched effect to clear focus when IME is closed
     LaunchedEffect(imeBottom) {
         if (imeBottom == 0 && isFocused) {
             isFocused = false
@@ -160,7 +169,7 @@ fun HomeScreen(
                     }
                     .focusRequester(focusRequester)
             )
-
+// FlowRow to display filters
             FlowRow(
                 modifier = Modifier
                     .constrainAs(filterRow) {

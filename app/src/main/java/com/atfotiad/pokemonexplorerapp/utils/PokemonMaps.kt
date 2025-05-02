@@ -11,6 +11,10 @@ import com.atfotiad.pokemonexplorerapp.ui.theme.Grass
 import com.atfotiad.pokemonexplorerapp.ui.theme.Psychic
 import com.atfotiad.pokemonexplorerapp.ui.theme.Steel
 import com.atfotiad.pokemonexplorerapp.ui.theme.Water
+/***
+ * A file that contains mappings for types and their corresponding resources
+ * */
+
 
 val typeToResourceMap = mapOf(
     "fire" to R.drawable.fire,

@@ -10,6 +10,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+/** [PokeRemoteDataSource] is a class that provides methods for retrieving Pokemon data from the remote API.
+ * @param pokeApi is an instance of [PokeClient]
+ * @throws Exception if the request fails
+ *
+ * */
 open class PokeRemoteDataSource @Inject constructor(
     private val pokeApi: PokeClient
 ) {

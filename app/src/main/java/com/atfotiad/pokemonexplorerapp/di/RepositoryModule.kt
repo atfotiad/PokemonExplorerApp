@@ -10,6 +10,9 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
+/**
+ * [RepositoryModule] is a module that provides bindings for repository-related dependencies.]
+ * */
 abstract class RepositoryModule {
 
     @Binds

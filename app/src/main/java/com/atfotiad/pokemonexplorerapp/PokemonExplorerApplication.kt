@@ -4,5 +4,8 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class PokemonExplorerApplication: Application() {
+/**
+ *  [PokemonExplorerApplication] is a custom Hilt application class for the Pokemon Explorer app.
+ * */
+class PokemonExplorerApplication : Application() {
 }

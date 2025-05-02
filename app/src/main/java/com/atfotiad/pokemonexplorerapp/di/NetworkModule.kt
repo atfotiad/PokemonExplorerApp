@@ -14,6 +14,9 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
+/**
+ * [NetworkModule] is a module that provides network-related dependencies.
+ * */
 object NetworkModule {
 
     @Provides

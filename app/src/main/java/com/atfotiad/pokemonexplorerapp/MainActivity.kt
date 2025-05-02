@@ -13,6 +13,9 @@ import com.atfotiad.pokemonexplorerapp.ui.theme.PokemonExplorerAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
+/**
+ *  [MainActivity] is the main activity of the application.
+ * */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -9,6 +9,11 @@ import androidx.compose.ui.unit.dp
 import com.atfotiad.pokemonexplorerapp.data.model.Stat
 
 @Composable
+/**
+ *  [PokemonStatsSection] is a composable function that displays the stats of a Pokemon.]
+ *  @param modifier is an instance of [Modifier]
+ *  @param stats is a list of [Stat]
+ * */
 fun PokemonStatsSection(modifier: Modifier = Modifier, stats: List<Stat>) {
     Column(
         modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp)

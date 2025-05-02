@@ -12,10 +12,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @ActivityRetainedScoped
 @Suppress("UNCHECKED_CAST")
+/** [PokeRepositoryImpl] is a class that implements the [PokeRepository]
+ * @param remoteDataSource is an instance of [PokeRemoteDataSource]
+ * */
 class PokeRepositoryImpl @Inject constructor(
     private val remoteDataSource: PokeRemoteDataSource
 ): PokeRepository {

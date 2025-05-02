@@ -24,6 +24,21 @@ import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
+/**
+ *  [PokemonList] is a composable function that displays a list of Pokemon.
+ *  @param sharedTransitionScope is an instance of [SharedTransitionScope]
+ *  @param animatedContentScope is an instance of [AnimatedContentScope]
+ *  @param modifier is an instance of [Modifier]
+ *  @param list is a list of [Pokemon]
+ *  @param listState is an instance of [LazyListState]
+ *  @param onClick is a lambda function that is called when a Pokemon is clicked
+ *  @param isLoading is a boolean value that indicates whether the list is loading
+ *  @param onLoadMore is a lambda function that is called when the user reaches the end of the list
+ *  @param shouldShowLoadMoreButton is a [State] that indicates whether the load more button should be shown
+ *  @param shouldShowEndOfResults is a [State] that indicates whether the end of results message should be shown
+ *  @param shouldShowNoPokemonFound is a [State] that indicates whether the no pokemon found message should be shown
+ *  @param stateUI is a [StateUI] that indicates the state of the UI
+ * */
 fun PokemonList(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,

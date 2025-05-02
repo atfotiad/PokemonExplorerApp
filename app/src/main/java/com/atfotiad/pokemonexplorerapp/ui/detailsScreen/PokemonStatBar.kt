@@ -33,6 +33,12 @@ import com.atfotiad.pokemonexplorerapp.ui.theme.Yellow
 import java.util.Locale
 
 @Composable
+/**
+ *  [PokemonStatBar] is a composable function that displays the stats of a Pokemon.]
+ *  @param modifier is an instance of [Modifier]
+ *  @param statValue is an instance of [Stat]
+ *  @param animDelay is an integer value that represents the delay of the animation
+ * */
 fun PokemonStatBar(
     modifier: Modifier = Modifier,
     statValue: Stat,

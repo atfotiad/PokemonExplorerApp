@@ -26,6 +26,14 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
+/**
+ *  [PokemonItem] is a composable function that displays a single Pokemon item.
+ *  @param sharedTransitionScope is an instance of [SharedTransitionScope]
+ *  @param animatedContentScope is an instance of [AnimatedContentScope]
+ *  @param modifier is an instance of [Modifier]
+ *  @param pokemon is an instance of [Pokemon]
+ *  @param onPokemonClick is a lambda function that is called when a Pokemon is clicked
+ * */
 fun PokemonItem(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,

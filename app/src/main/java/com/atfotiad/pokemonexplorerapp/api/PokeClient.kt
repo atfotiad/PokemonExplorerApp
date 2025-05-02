@@ -9,7 +9,8 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import java.io.IOException
 import kotlin.jvm.Throws
-
+/** [PokeClient] is an interface that defines the API endpoints for retrieving Pokemon data.
+ * */
 interface PokeClient {
 
     @GET("pokemon")

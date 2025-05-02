@@ -13,6 +13,9 @@ import androidx.navigation.compose.rememberNavController
 import com.atfotiad.pokemonexplorerapp.ui.homeScreen.PokemonViewModel
 
 @Composable
+/**
+ * [PokeApp] is a composable function that sets the content of the app.]
+ * */
 fun PokeApp() {
     Surface(
         modifier = Modifier.fillMaxSize(),

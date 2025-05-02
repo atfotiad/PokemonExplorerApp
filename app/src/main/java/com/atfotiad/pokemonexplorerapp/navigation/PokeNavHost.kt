@@ -21,6 +21,9 @@ import kotlin.reflect.typeOf
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
+/***
+ * [PokeNavHost] is a composable function that sets up the navigation graph for the app.
+ */
 fun PokeNavHost(
     navController: NavHostController,
     pokemonViewModel: PokemonViewModel,
@@ -58,7 +61,9 @@ fun PokeNavHost(
         }
     }
 }
-
+/**
+ * [navigateSingleTopTo] is an extension function that navigates to a destination in the navigation graph.
+ * */
 fun NavHostController.navigateSingleTopTo(route: Any) = this.navigate(route) {
     popUpTo(
         this@navigateSingleTopTo.graph.findStartDestination().id
@@ -68,7 +73,9 @@ fun NavHostController.navigateSingleTopTo(route: Any) = this.navigate(route) {
     launchSingleTop = true
     restoreState = true
 }
-
+/**
+ *  [navigateToDetails] is an extension function that navigates to the details screen.
+ * */
 private fun NavHostController.navigateToDetails(pokemon: Pokemon) {
     this.navigateSingleTopTo(PokemonDestination.DetailScreen(pokemon))
 }

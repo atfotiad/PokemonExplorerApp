@@ -6,7 +6,10 @@ import android.os.Parcelable
 import androidx.navigation.NavType
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-
+/**
+ *  [toNavType] is an extension function that converts a Parcelable type to a NavType
+ *  Useful to pass [Parcelable] in object based destinations in navigation
+ * */
 inline fun <reified T : Parcelable> NavType.Companion.toNavType(): NavType<T> {
 
     return object : NavType<T>(

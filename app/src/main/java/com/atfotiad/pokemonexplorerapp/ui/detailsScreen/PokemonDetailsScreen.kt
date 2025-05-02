@@ -53,6 +53,13 @@ import java.util.Locale
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
+/**
+ * [PokemonDetailsScreen] is a composable function that displays the details of a Pokemon.]
+ * @param transitionScope is an instance of [SharedTransitionScope]
+ * @param animatedContentScope is an instance of [AnimatedContentScope]
+ * @param modifier is an instance of [Modifier]
+ * @param viewModel is an instance of [PokemonDetailsViewModel]
+ */
 fun PokemonDetailsScreen(
     transitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
@@ -108,6 +115,15 @@ fun PokemonDetailsScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
+/**
+ *  [PokemonCard] is a composable function that displays the details of a Pokemon.]
+ *  @param sharedTransitionScope is an instance of [SharedTransitionScope]
+ *  @param animatedContentScope is an instance of [AnimatedContentScope]
+ *  @param pokemon is an instance of [Pokemon]
+ *  @param modifier is an instance of [Modifier]
+ *  @param isMediaPlayerReady is a boolean value that indicates whether the media player is ready
+ *  @param onPlayCry is a function that is called when the "Cry" button is clicked
+ * */
 fun PokemonCard(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,

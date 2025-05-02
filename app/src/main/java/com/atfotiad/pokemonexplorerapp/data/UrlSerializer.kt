@@ -9,7 +9,10 @@ import kotlinx.serialization.encoding.Encoder
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-
+/**
+ * [UrlSerializer] is a serializer for URL strings.
+ * It is used to serialize and deserialize URL strings to and from the network.
+ * */
 object UrlSerializer : KSerializer<String> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("UrlEncodedString", PrimitiveKind.STRING)

@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.tts.TextToSpeechService
 import com.atfotiad.pokemonexplorerapp.ui.homeScreen.HomeScreen
 import com.atfotiad.pokemonexplorerapp.ui.detailsScreen.PokemonDetailsScreen
 import com.atfotiad.pokemonexplorerapp.ui.detailsScreen.PokemonDetailsViewModel
@@ -27,7 +28,10 @@ import kotlin.reflect.typeOf
 fun PokeNavHost(
     navController: NavHostController,
     pokemonViewModel: PokemonViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    ttsService: TextToSpeechService?,
+    isTtsServiceReady: Boolean,
+    onSpeakPokemonDetails:  (Pokemon) -> Unit
 ) {
 
     SharedTransitionLayout {
@@ -55,7 +59,10 @@ fun PokeNavHost(
                 PokemonDetailsScreen(
                     this@SharedTransitionLayout,
                     this@composable,
-                    viewModel = pokemonDetailsViewModel
+                    viewModel = pokemonDetailsViewModel,
+                    ttsService = ttsService,
+                    isTtsServiceReady = isTtsServiceReady,
+                    onSpeakPokemonDetails = onSpeakPokemonDetails
                 )
             }
         }

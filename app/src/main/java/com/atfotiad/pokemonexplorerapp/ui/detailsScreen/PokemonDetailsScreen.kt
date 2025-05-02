@@ -2,6 +2,7 @@ package com.atfotiad.pokemonexplorerapp.ui.detailsScreen
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.atfotiad.pokemonexplorerapp.data.model.Pokemon
+import com.atfotiad.pokemonexplorerapp.tts.TextToSpeechService
 import com.atfotiad.pokemonexplorerapp.ui.homeScreen.emptyPokemon
 import com.atfotiad.pokemonexplorerapp.utils.typeToResourceMap
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -48,23 +50,27 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-/**
- * [PokemonDetailsScreen] is a composable function that displays the details of a Pokemon.]
- * @param transitionScope is an instance of [SharedTransitionScope]
- * @param animatedContentScope is an instance of [AnimatedContentScope]
- * @param modifier is an instance of [Modifier]
- * @param viewModel is an instance of [PokemonDetailsViewModel]
- */
+        /**
+         * [PokemonDetailsScreen] is a composable function that displays the details of a Pokemon.]
+         * @param transitionScope is an instance of [SharedTransitionScope]
+         * @param animatedContentScope is an instance of [AnimatedContentScope]
+         * @param modifier is an instance of [Modifier]
+         * @param viewModel is an instance of [PokemonDetailsViewModel]
+         */
 fun PokemonDetailsScreen(
     transitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     modifier: Modifier = Modifier,
-    viewModel: PokemonDetailsViewModel
+    viewModel: PokemonDetailsViewModel,
+    ttsService: TextToSpeechService?,
+    isTtsServiceReady: Boolean,
+    onSpeakPokemonDetails: (Pokemon) -> Unit
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -106,33 +112,55 @@ fun PokemonDetailsScreen(
             animatedContentScope,
             pokemon = pokemon,
             modifier,
-            isMediaPlayerReady
-        ) {
-            viewModel.playCry()
-        }
+            isMediaPlayerReady,
+            isTtsServiceReady = isTtsServiceReady,
+            onSpeakPokemonDetails = onSpeakPokemonDetails,
+            onPlayCry = { viewModel.playCry() }
+        )
     }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-/**
- *  [PokemonCard] is a composable function that displays the details of a Pokemon.]
- *  @param sharedTransitionScope is an instance of [SharedTransitionScope]
- *  @param animatedContentScope is an instance of [AnimatedContentScope]
- *  @param pokemon is an instance of [Pokemon]
- *  @param modifier is an instance of [Modifier]
- *  @param isMediaPlayerReady is a boolean value that indicates whether the media player is ready
- *  @param onPlayCry is a function that is called when the "Cry" button is clicked
- * */
+        /**
+         *  [PokemonCard] is a composable function that displays the details of a Pokemon.]
+         *  @param sharedTransitionScope is an instance of [SharedTransitionScope]
+         *  @param animatedContentScope is an instance of [AnimatedContentScope]
+         *  @param pokemon is an instance of [Pokemon]
+         *  @param modifier is an instance of [Modifier]
+         *  @param isMediaPlayerReady is a boolean value that indicates whether the media player is ready
+         *  @param onPlayCry is a function that is called when the "Cry" button is clicked
+         * */
 fun PokemonCard(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     pokemon: Pokemon,
     modifier: Modifier = Modifier,
     isMediaPlayerReady: Boolean,
-    onPlayCry: () -> Unit
+    onPlayCry: () -> Unit,
+    onSpeakPokemonDetails: (Pokemon) -> Unit,
+    isTtsServiceReady: Boolean
 ) {
 
+    Log.i("DetailsScreen", "Composed for ${pokemon.name}, TTS Ready: $isTtsServiceReady")
+
+    LaunchedEffect(key1 = Unit) {
+        if (isTtsServiceReady) {
+            delay(1500)
+            if (pokemon.pokeDexEntry.isNotBlank()) { // Check if Pokedex entry is not blank
+                Log.i(
+                    "PokemonCard",
+                    "${pokemon.name} LaunchedEffect triggered, TTS Ready: $isTtsServiceReady"
+                )
+                Log.i("PokemonCard", "Speaking ${pokemon.name}")
+                onSpeakPokemonDetails(pokemon)
+            } else if (pokemon.pokeDexEntry.isBlank()) {
+                Log.w("PokemonCard", "${pokemon.name} Pokedex entry is blank, not speaking.")
+            } else {
+                Log.w("PokemonCard", "TTS not ready to speak ${pokemon.name}")
+            }
+        }
+    }
     Card(
         modifier = modifier
             .fillMaxSize()

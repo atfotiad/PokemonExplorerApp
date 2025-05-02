@@ -152,7 +152,6 @@ fun HomeScreen(
                 onTextChange = pokemonViewModel::setSearchQuery,
                 onTrailingIconClick = {
                     pokemonViewModel.setSearchQuery("")
-                    pokemonViewModel.performSearch()
                     focusManager.clearFocus()
                 },
                 onSearch = {

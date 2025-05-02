@@ -39,8 +39,6 @@ Uses MVVM architecture and Dependency Injection.
 
 ## Architecture Decisions
 
-Provide an overview of the key architectural decisions you made for this project. This helps others (and your future self) understand the reasoning behind the structure of your app.
-
 **Model-View-ViewModel (MVVM)
   > The app follows the Model-View-ViewModel (MVVM) architecture to ensure a clear separation of concerns. The View (Compose UI) observes the ViewModel, which prepares and holds the data. The Model layer handles data retrieval (Repository) and data sources (RemoteDataSource). This improves testability, maintainability, and code organization.
 

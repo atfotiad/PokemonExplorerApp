@@ -70,7 +70,7 @@ Clone the repository and hit Build on the App module.
 * Pokemon will appear if the next page includes Pokemon of that type.
 * Searching by name requires full name and if any filters are on, make sure it is the correct type.
 * Pokemon Details: Name, Types, Stats, PokeDex Text, Image, Latest Cry.
-* Search tips: To search mega evolutions use <pokemon>-<mega>-<x|y> e.g charizard-mega-x
-* To search gigantamax use <pokemon>-<gmax> e.g pikachu-gmax
+* Search tips: To search mega evolutions use pokemon-mega-x|y e.g charizard-mega-x
+* To search gigantamax use pokemon-gmax e.g pikachu-gmax
 
 * Limitations: Api does not support partial name search.

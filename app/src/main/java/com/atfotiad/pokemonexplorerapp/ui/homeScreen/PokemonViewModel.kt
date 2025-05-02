@@ -71,7 +71,7 @@ class PokemonViewModel @Inject constructor(
         _isSearchingByName.value = query.isNotBlank()
         if (query.isBlank()) {
             performSearch() // Re-filter when search query is cleared
-        }
+        } else filterAndUpdateState()
     }
 
     /**
@@ -178,10 +178,11 @@ class PokemonViewModel @Inject constructor(
     private fun loadInitialPokemon() {
         loadPokemonList(true)
     }
-/**
- *  [loadPokemonList] is a function that loads pokemon.
- *  @param isInitialLoad is a [Boolean] to specify if we are initial loading.
- * */
+
+    /**
+     *  [loadPokemonList] is a function that loads pokemon.
+     *  @param isInitialLoad is a [Boolean] to specify if we are initial loading.
+     * */
     private fun loadPokemonList(isInitialLoad: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             if (isInitialLoad) {

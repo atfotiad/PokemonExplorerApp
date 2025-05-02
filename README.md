@@ -60,17 +60,17 @@ Clone the repository and hit Build on the App module.
 
 
 ## Usage
-Load initial first page of 10 Pokemon when it opens.
-Load More via clicking the button to fetch the next 10 Unfiltered Pokemon.
-View Details via clicking a pokemon card in the list.
-Type a name and search locally by selecting a filter.
-Type a name and search remotely by clicking the Search button on the keyboard.(Requires Full Pokemon Name)
-Clear filters to load all Pokemon. Clearing query name applies filters again 
-If selected a type and then Load More, it fetches the next page, and then filters by that type.
-Pokemon will appear if the next page includes Pokemon of that type.
-Searching by name requires full name and if any filters are on, make sure it is the correct type.
-Pokemon Details: Name, Types, Stats, PokeDex Text, Image, Latest Cry.
-Search tips: To search mega evolutions use <pokemon>-<mega>-<x|y> e.g charizard-mega-x
-To search gigantamax use <pokemon>-<gmax> e.g pikachu-gmax
+*Load initial first page of 10 Pokemon when it opens.
+*Load More via clicking the button to fetch the next 10 Unfiltered Pokemon.
+*View Details via clicking a pokemon card in the list.
+*Type a name and search locally by selecting a filter.
+*Type a name and search remotely by clicking the Search button on the keyboard.(Requires Full Pokemon Name)
+*Clear filters to load all Pokemon. Clearing query name applies filters again 
+*If selected a type and then Load More, it fetches the next page, and then filters by that type.
+*Pokemon will appear if the next page includes Pokemon of that type.
+*Searching by name requires full name and if any filters are on, make sure it is the correct type.
+*Pokemon Details: Name, Types, Stats, PokeDex Text, Image, Latest Cry.
+*Search tips: To search mega evolutions use <pokemon>-<mega>-<x|y> e.g charizard-mega-x
+*To search gigantamax use <pokemon>-<gmax> e.g pikachu-gmax
 
 Limitations: Api does not support partial name search.

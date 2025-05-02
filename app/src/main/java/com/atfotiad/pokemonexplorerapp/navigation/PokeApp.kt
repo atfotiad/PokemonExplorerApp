@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.atfotiad.pokemonexplorerapp.tts.TextToSpeechService
 import com.atfotiad.pokemonexplorerapp.ui.homeScreen.PokemonViewModel
+import java.util.Locale
 
 @Composable
         /**
@@ -84,6 +85,9 @@ fun PokeApp() {
             isTtsServiceReady = isTtsServiceReady,
             onSpeakPokemonDetails = { pokemonToSpeak ->
                 if (isTtsServiceReady && ttsService != null) {
+                    val firstLetter =
+                        pokemonToSpeak.types[0].type.name.lowercase(Locale.ENGLISH).firstOrNull()
+                    val article = if (firstLetter in listOf('a', 'e', 'i', 'o', 'u')) "an" else "a"
                     val typeText = if (pokemonToSpeak.types.size == 1) {
                         pokemonToSpeak.types[0].type.name + "type pokemon."
                     } else if (pokemonToSpeak.types.size == 2) {
@@ -91,10 +95,11 @@ fun PokeApp() {
                     } else {
                         "unknown type" // Handle cases with 0 or more than 2 types (rare)
                     }
-                    val statsText = ". its highest stat is " + pokemonToSpeak.stats.maxByOrNull { it.baseStat }?.stat?.name +
-                            "with a base stat of " + pokemonToSpeak.stats.maxByOrNull { it.baseStat }?.baseStat + "."
+                    val statsText =
+                        ". its highest stat is " + pokemonToSpeak.stats.maxByOrNull { it.baseStat }?.stat?.name +
+                                "with a base stat of " + pokemonToSpeak.stats.maxByOrNull { it.baseStat }?.baseStat + "."
                     ttsService!!.speak(
-                        pokemonToSpeak.name + "is a " + typeText + pokemonToSpeak.pokeDexEntry.replace(
+                        pokemonToSpeak.name + "is " + article + " " + typeText + pokemonToSpeak.pokeDexEntry.replace(
                             "[\n\t\u000c]".toRegex(),
                             " "
                         ) + ". " + statsText

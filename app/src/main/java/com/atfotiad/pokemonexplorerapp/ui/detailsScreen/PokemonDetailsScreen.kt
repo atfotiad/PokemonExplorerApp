@@ -70,7 +70,8 @@ fun PokemonDetailsScreen(
     viewModel: PokemonDetailsViewModel,
     ttsService: TextToSpeechService?,
     isTtsServiceReady: Boolean,
-    onSpeakPokemonDetails: (Pokemon) -> Unit
+    onSpeakPokemonDetails: (Pokemon) -> Unit,
+    onStopSpeaking: () -> Unit
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -115,6 +116,7 @@ fun PokemonDetailsScreen(
             isMediaPlayerReady,
             isTtsServiceReady = isTtsServiceReady,
             onSpeakPokemonDetails = onSpeakPokemonDetails,
+            onStopSpeaking = onStopSpeaking ,
             onPlayCry = { viewModel.playCry() }
         )
     }
@@ -139,15 +141,15 @@ fun PokemonCard(
     isMediaPlayerReady: Boolean,
     onPlayCry: () -> Unit,
     onSpeakPokemonDetails: (Pokemon) -> Unit,
+    onStopSpeaking: () -> Unit,
     isTtsServiceReady: Boolean
 ) {
 
     Log.i("DetailsScreen", "Composed for ${pokemon.name}, TTS Ready: $isTtsServiceReady")
 
-    LaunchedEffect(key1 = Unit) {
+    DisposableEffect(key1 = Unit) {
         if (isTtsServiceReady) {
-            delay(1500)
-            if (pokemon.pokeDexEntry.isNotBlank()) { // Check if Pokedex entry is not blank
+            if (pokemon.pokeDexEntry.isNotBlank()) {
                 Log.i(
                     "PokemonCard",
                     "${pokemon.name} LaunchedEffect triggered, TTS Ready: $isTtsServiceReady"
@@ -159,6 +161,9 @@ fun PokemonCard(
             } else {
                 Log.w("PokemonCard", "TTS not ready to speak ${pokemon.name}")
             }
+        }
+        onDispose {
+            onStopSpeaking()
         }
     }
     Card(

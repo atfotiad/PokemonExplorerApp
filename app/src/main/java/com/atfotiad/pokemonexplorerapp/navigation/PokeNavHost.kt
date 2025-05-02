@@ -31,7 +31,8 @@ fun PokeNavHost(
     modifier: Modifier = Modifier,
     ttsService: TextToSpeechService?,
     isTtsServiceReady: Boolean,
-    onSpeakPokemonDetails:  (Pokemon) -> Unit
+    onSpeakPokemonDetails:  (Pokemon) -> Unit,
+    onStopSpeaking: () -> Unit
 ) {
 
     SharedTransitionLayout {
@@ -62,7 +63,8 @@ fun PokeNavHost(
                     viewModel = pokemonDetailsViewModel,
                     ttsService = ttsService,
                     isTtsServiceReady = isTtsServiceReady,
-                    onSpeakPokemonDetails = onSpeakPokemonDetails
+                    onSpeakPokemonDetails = onSpeakPokemonDetails,
+                    onStopSpeaking = onStopSpeaking
                 )
             }
         }

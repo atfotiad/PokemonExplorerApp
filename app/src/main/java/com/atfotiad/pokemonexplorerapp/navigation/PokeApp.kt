@@ -108,6 +108,12 @@ fun PokeApp() {
                 } else {
                     Log.w("PokeApp", "TTS Service not ready to speak ${pokemonToSpeak.name}")
                 }
+            },
+            onStopSpeaking = {
+                if (isTtsServiceReady && ttsService != null) {
+                    ttsService!!.speak("")
+                    ttsService!!.stopSelf()
+                }
             }
         )
     }

@@ -41,19 +41,19 @@ Uses MVVM architecture and Dependency Injection.
 
 Provide an overview of the key architectural decisions you made for this project. This helps others (and your future self) understand the reasoning behind the structure of your app.
 
-* **Model-View-ViewModel (MVVM)
+**Model-View-ViewModel (MVVM)
   > The app follows the Model-View-ViewModel (MVVM) architecture to ensure a clear separation of concerns. The View (Compose UI) observes the ViewModel, which prepares and holds the data. The Model layer handles data retrieval (Repository) and data sources (RemoteDataSource). This improves testability, maintainability, and code organization.
 
-* **Dependency Injection with Hilt
+**Dependency Injection with Hilt
   > Hilt was chosen as the dependency injection framework to simplify the management of dependencies throughout the application. It leverages Dagger under the hood and provides a standard way to incorporate DI into Android apps, reducing boilerplate and improving testability.
 
-* **Asynchronous Operations with Kotlin Coroutines and Flow
+**Asynchronous Operations with Kotlin Coroutines and Flow
   > Kotlin Coroutines and Flow are used extensively for handling asynchronous operations, such as network requests. Flow provides a reactive stream of data that can be observed by the UI, making it suitable for handling data that changes over time. Coroutines simplify writing asynchronous code in a sequential and readable manner.
 
-* **Networking with Retrofit
+**Networking with Retrofit
   > Retrofit was selected as the HTTP client due to its ease of use and integration with Kotlin and Moshi/Gson for handling API communication and data serialization/deserialization. Its declarative approach makes defining API endpoints straightforward.
 
-* **UI Layer with Jetpack Compose
+**UI Layer with Jetpack Compose
   > Jetpack Compose is used for building the user interface with a declarative and reactive approach. It simplifies UI development, reduces the amount of boilerplate code, and allows for more dynamic and interactive UIs.
   
 
